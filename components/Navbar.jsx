@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 const Navbar=()=>{
   return(
     <>
@@ -12,10 +14,10 @@ const Navbar=()=>{
       </div>
       {/* Desktop Menu */}
       <div className="hidden md:flex space-x-6 text-gray-700 font-medium">
-        <a href="#" className="hover:text-indigo-600 transition duration-200">Home</a>
+        <Link to="/" className="hover:text-indigo-600 transition duration-200">Home</Link>
         
         <a href="#" className="hover:text-indigo-600 transition duration-200">Edit Technical Chart</a>
-        <a href="#" className="hover:text-indigo-600 transition duration-200">Create Technical Chart</a>
+        <Link to="/create-page" className="hover:text-indigo-600 transition duration-200">Create Technical Chart</Link>
       </div>
     </div>
   </div>

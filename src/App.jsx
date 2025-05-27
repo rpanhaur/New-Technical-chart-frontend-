@@ -1,6 +1,7 @@
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 
 import Home from '../pages/Home'
+import CreatePage from '../pages/CreatePage'
 
 const App=()=>{
   return(
@@ -9,6 +10,7 @@ const App=()=>{
     <BrowserRouter>
     <Routes>
       <Route path='/' element={ <Home/>} />
+      <Route path='/create-page' element={<CreatePage/>} />
 
 
 
