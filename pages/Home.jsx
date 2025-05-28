@@ -15,7 +15,7 @@
 //   const fetchRoster=async()=>{
 
 //     const response=await axios.get('http://localhost:3000/api/roster')
-//     console.log(response.data.rosters);
+//     console.log(response.data.rosters);  
 //     setRoster(response.data.rosters)
 //   }
 
@@ -24,13 +24,13 @@
 //   },[])
 //   console.log(roster,'final data ');
 
-    
+
 
 //     return (
 //         <>
 //             <Navbar/>
 //             <ContentPageHead/>
-            
+
 
 //             <div className="overflow-x-auto">
 //                 <table className="min-w-full table-fixed border border-gray-300 bg-white shadow-lg rounded-lg overflow-hidden">
@@ -78,10 +78,12 @@ const Home = () => {
     fetchRoster();
   }, []);
 
+  console.log(roster, 'roster data check ')
+
   return (
     <>
       <Navbar />
-      <ContentPageHead/>
+      <ContentPageHead />
       <div className="p-6">
         <table className="w-full border border-gray-300 shadow rounded-lg">
           <thead className="bg-indigo-600 text-white">
