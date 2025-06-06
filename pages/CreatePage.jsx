@@ -266,7 +266,9 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import CreateShiftDuty from "./CreateShiftDuty";
+import TechNav from "../components/TechNav";
+
+
 
 const CreatePage = () => {
   const navigate = useNavigate();
@@ -410,7 +412,9 @@ const CreatePage = () => {
   return (
     <>
       <Navbar />
-     
+
+
+
       <div className="p-6">
         {/* Shift Controls */}
         <div className="flex gap-4 mb-4">
@@ -430,21 +434,8 @@ const CreatePage = () => {
           </div>
 
 
-
-
-
-
-
-
-
         </div>
-
-       
-
-
-
-
-
+        <TechNav/>
 
 
 

@@ -12,6 +12,7 @@ const App=()=>{
     <Routes>
       <Route path='/' element={ <Home/>} />
       <Route path='/create-page' element={<CreatePage/>} />
+
       <Route path='/create-duty' element={<CreateShiftDuty/>} />
 
 
