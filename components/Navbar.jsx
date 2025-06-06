@@ -15,6 +15,7 @@ const Navbar=()=>{
       {/* Desktop Menu */}
       <div className="hidden md:flex space-x-6 text-gray-700 font-medium">
         <Link to="/" className="hover:text-indigo-600 transition duration-200">Home</Link>
+        <Link to="/create-duty" className="hover:text-indigo-600 transition duration-200">Create Shift Duty </Link>
         
         <a href="#" className="hover:text-indigo-600 transition duration-200">Edit Technical Chart</a>
         <Link to="/create-page" className="hover:text-indigo-600 transition duration-200">Create Technical Chart</Link>
