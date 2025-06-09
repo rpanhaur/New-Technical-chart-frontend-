@@ -1,9 +1,13 @@
 
 
+
 // import { useState } from "react";
 // import Navbar from "../components/Navbar";
 // import axios from "axios";
 // import { useNavigate } from "react-router-dom";
+// import TechNav from "../components/TechNav";
+
+
 
 // const CreatePage = () => {
 //   const navigate = useNavigate();
@@ -74,7 +78,7 @@
 //       shift,
 //       shiftDate,
 //     };
-//     console.log(newData,'check check check');
+//     console.log(newData, 'check check check');
 
 //     if (rosterList.length === 0) {
 //       newData.onAirTime = data.scheduleTime;
@@ -130,7 +134,7 @@
 //         totalDuration: totalDurationFormatted,
 //       }));
 
-//       console.log(submission,'check submission');
+//       console.log(submission, 'check submission');
 
 //       for (let entry of submission) {
 //         await axios.post("http://localhost:3000/api/roster", entry);
@@ -147,6 +151,9 @@
 //   return (
 //     <>
 //       <Navbar />
+
+
+
 //       <div className="p-6">
 //         {/* Shift Controls */}
 //         <div className="flex gap-4 mb-4">
@@ -158,12 +165,19 @@
 //               <option value="Evening">Evening (1PM - 9PM)</option>
 //               <option value="Mid-night">Mid-night (9PM - 5AM)</option>
 //             </select>
+
 //           </div>
 //           <div>
 //             <label className="block text-sm font-medium text-gray-700">Shift Date</label>
 //             <input type="date" value={shiftDate} onChange={(e) => setShiftDate(e.target.value)} className="border rounded px-2 py-1 text-sm" />
 //           </div>
+
+
 //         </div>
+//         <TechNav/>
+
+
+
 
 //         {errorMsg && <div className="text-red-600 mb-2">{errorMsg}</div>}
 
@@ -262,6 +276,11 @@
 
 // export default CreatePage;
 
+
+
+// back state code 
+
+
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
@@ -270,7 +289,10 @@ import TechNav from "../components/TechNav";
 
 
 
-const CreatePage = () => {
+const CreatePage = ({ duty }) => {
+
+
+
   const navigate = useNavigate();
   const SHIFT_DURATION_SECONDS = 8 * 3600;
 
@@ -435,7 +457,7 @@ const CreatePage = () => {
 
 
         </div>
-        <TechNav/>
+        <TechNav />
 
 
 
@@ -480,6 +502,25 @@ const CreatePage = () => {
         {/* Chart Preview */}
         <div className="mt-10">
           <h2 className="text-xl font-bold mb-2 text-indigo-700">📝 Final Technical Chart Preview</h2>
+
+          <div className="mt-10 p-6 rounded-lg shadow bg-gray-50 border border-gray-200">
+            <h2 className="text-xl font-bold mb-4 text-blue-700">📋
+          🧑‍💼 Shift Duty Details </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+              {Object.entries(duty || {}).map(([key, value]) => (
+                <div key={key} className="bg-white border rounded p-3 shadow">
+                  <span className="block text-gray-600 font-medium capitalize">{key.replace(/\d+/, ' $&')}</span>
+                  <span className="text-gray-800 font-semibold">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+
+
+
+
+
 
           {/* Shift Summary */}
           {shift && shiftDate && (
@@ -536,6 +577,28 @@ const CreatePage = () => {
 };
 
 export default CreatePage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

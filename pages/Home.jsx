@@ -1,6 +1,4 @@
 
-
-
 // import { useEffect, useState } from "react";
 // import axios from "axios";
 // import Navbar from "../components/Navbar";
@@ -153,9 +151,6 @@
 // export default Home;
 
 
-
-
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -306,6 +301,22 @@ const Home = () => {
 };
 
 export default Home;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
