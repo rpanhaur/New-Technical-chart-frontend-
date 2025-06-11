@@ -1,548 +1,349 @@
-// import Navbar from "../components/Navbar"
+
+
+
+
+// import React, { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { useShiftDuty } from '../pages/CreateShiftDutyContext';
+// import Navbar from '../components/Navbar';
+
+// const dutyOptions = ['On Duty', 'OffDay Duty', 'Leave', 'Weekly Off','Live Duty','PCR' ,'Others'];
 
 // const CreateShiftDuty = () => {
+//   const { addShiftDuty } = useShiftDuty();
+//   const navigate = useNavigate();
 
+//   const [duty, setDuty] = useState({
+//     shiftDate: '',
+//     shiftTime: '',
+//     engineers: Array(6).fill({ name: '', status: '' }),
+//     technician: { name: '', status: '' },
+//     electrician: { name: '', status: '' }
+//   });
 
-// // TO do work in this 
+//   const handleEngineerChange = (index, field, value) => {
+//     const updatedEngineers = [...duty.engineers];
+//     updatedEngineers[index] = {
+//       ...updatedEngineers[index],
+//       [field]: value
+//     };
+//     setDuty({ ...duty, engineers: updatedEngineers });
+//   };
 
-// import { Link, useNavigate } from "react-router-dom"
-
-// import Navbar from "../components/Navbar"
-// import { useState } from "react"
-// import axios from "axios"
-
-
-
-// const CreateShiftDuty = () => {
-
-//   const navigate = useNavigate()
-
-//   const [data, setData] = useState({
-//       engineer1:"",
-//       engineer2:"",
-//       engineer3:"",
-//       engineer4:"",
-//       engineer5:"",
-//       producer:"",
-//       anchor:"",
-//       camera1:"",
-//       camera2:"",
-//       technician:"",
-//       electrician:""
-   
-//   })
+//   const handleTechChange = (role, field, value) => {
+//     setDuty({
+//       ...duty,
+//       [role]: { ...duty[role], [field]: value }
+//     });
+//   };
 
 //   const handleChange = (e) => {
-//     const { name, value } = e.target
-//     setData({
-//       ...data,
-//       [name]: value
-//     })
-//     console.log(data);
-//   }
+//     const { name, value } = e.target;
+//     setDuty({ ...duty, [name]: value });
+//   };
 
-//   const addShiftDuty = async (e) => {
-//     e.preventDefault()
-//     const response = await axios.post("http://localhost:3000/api/duties", data)
-//     console.log(response);
-//     if (response.status == 200) {
-//       navigate('/')
-//     } else {
-//       alert('Something is wrong ')
-//     }
-
-
-//   }
-
-
-
-
-
-
-
-
-
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     addShiftDuty(duty);
+//     navigate('/');
+//   };
 
 //   return (
-
 //     <>
 //     <Navbar/>
-   
-
-//       <div className="w-full bg-white border border-gray-200 rounded-lg p-6 shadow space-y-8 text-sm">
-//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//           {/* On Duty Engineers */}
-//           <div className="bg-blue-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-blue-700 font-bold text-base mb-4">👨‍🔧 On Duty Engineers</h2>
-//             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-//               {[1, 2, 3].map((num) => (
-//                 <div key={num} className="flex flex-col">
-//                   <label htmlFor={`engineer${num}`} className="text-gray-700 text-xs mb-1">Engineer {num}</label>
-//                   <input type="text" id={`engineer${num}`} name={`engineer${num}`} placeholder="Name" 
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
-//                 </div>
-//               ))}
-//             </div>
+//     <div className="max-w-5xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-md">
+//       <h2 className="text-2xl font-bold mb-6 text-gray-800">Create Technical Shift Duty</h2>
+//       <form onSubmit={handleSubmit} className="space-y-6">
+//         {/* Shift Time & Date */}
+//         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//           <div>
+//             <label className="block text-gray-700 font-medium mb-1">Shift Date</label>
+//             <input
+//               type="date"
+//               name="shiftDate"
+//               value={duty.shiftDate}
+//               onChange={handleChange}
+//               className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+//               required
+//             />
 //           </div>
-
-//           {/* News Team */}
-//           <div className="bg-yellow-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-yellow-700 font-bold text-base mb-4">📰 News Team</h2>
-//             <div className="grid grid-cols-2 gap-3">
-//               {["Producer", "Anchor"].map((role) => (
-//                 <div key={role} className="flex flex-col">
-//                   <label htmlFor={role.toLowerCase()} className="text-gray-700 text-xs mb-1">{role}</label>
-//                   <input type="text" id={role.toLowerCase()} name={role.toLowerCase()} placeholder="Name" 
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-yellow-400" />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-
-//            {/* Cameramen */}
-
-         
-//           <div className="bg-purple-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-purple-700 font-bold text-base mb-4">🎥 Cameramen</h2>
-//             <div className="grid grid-cols-2 gap-3">
-//               {[1, 2].map((num) => (
-//                 <div key={num} className="flex flex-col">
-//                   <label htmlFor={`camera${num}`} className="text-gray-700 text-xs mb-1">Camera {num}</label>
-//                   <input type="text" id={`camera${num}`} name={`camera${num}`} placeholder="Name" onChange={handleChange}
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-400" />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-
-          
-//            {/* Engineers Contd. */}
-
-         
-//           <div className="bg-blue-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-blue-700 font-bold text-base mb-4">👨‍🔧 Engineers (Contd.)</h2>
-//             <div className="grid grid-cols-2 gap-3">
-//               {[4, 5].map((num) => (
-//                 <div key={num} className="flex flex-col">
-//                   <label htmlFor={`engineer${num}`} className="text-gray-700 text-xs mb-1">Engineer {num}</label>
-//                   <input type="text" id={`engineer${num}`} name={`engineer${num}`} placeholder="Name"
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-          
-
-//           {/* Other Staff */}
-//           <div className="bg-green-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-green-700 font-bold text-base mb-4">🔧 Other Staff</h2>
-//             <div className="grid grid-cols-2 gap-3">
-//               {["Technician", "Electrician"].map((role) => (
-//                 <div key={role} className="flex flex-col">
-//                   <label htmlFor={role.toLowerCase()} className="text-gray-700 text-xs mb-1">{role}</label>
-//                   <input type="text" id={role.toLowerCase()} name={role.toLowerCase()} placeholder="Name"
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-400" />
-//                 </div>
-//               ))}
-//             </div>
+//           <div>
+//             <label className="block text-gray-700 font-medium mb-1">Shift Time</label>
+//             <select
+//               name="shiftTime"
+//               value={duty.shiftTime}
+//               onChange={handleChange}
+//               className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+//               required
+//             >
+//               <option value="">Select Shift</option>
+//               <option value="Morning">Morning</option>
+//               <option value="Evening">Evening</option>
+//               <option value="Night">Night</option>
+//             </select>
 //           </div>
 //         </div>
 
-//         {/* Save Button */}
-//         <div className="text-right">
-//           <button
-//             type="button"
-//             className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md shadow transition duration-200"
-//           >
-//             💾 Save
-//           </button>
+//         {/* Engineers */}
+//         <div>
+//           <label className="block text-gray-700 font-medium mb-1">Engineers (6)</label>
+//           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+//             {duty.engineers.map((engineer, index) => (
+//               <div key={index} className="flex flex-col gap-2">
+//                 <input
+//                   type="text"
+//                   placeholder={`Engineer ${index + 1} Name`}
+//                   value={engineer.name}
+//                   onChange={(e) => handleEngineerChange(index, 'name', e.target.value)}
+//                   className="px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+//                 />
+//                 <select
+//                   value={engineer.status}
+//                   onChange={(e) => handleEngineerChange(index, 'status', e.target.value)}
+//                   className="px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+//                 >
+//                   <option value="">Select Status</option>
+//                   {dutyOptions.map((opt) => (
+//                     <option key={opt} value={opt}>{opt}</option>
+//                   ))}
+//                 </select>
+//               </div>
+//             ))}
+//           </div>
 //         </div>
-//       </div>
 
+//         {/* Technician & Electrician */}
+//         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//           {['technician', 'electrician'].map((role) => (
+//             <div key={role}>
+//               <label className="block text-gray-700 font-medium mb-1 capitalize">{role}</label>
+//               <input
+//                 type="text"
+//                 placeholder={`${role.charAt(0).toUpperCase() + role.slice(1)} Name`}
+//                 value={duty[role].name}
+//                 onChange={(e) => handleTechChange(role, 'name', e.target.value)}
+//                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 mb-2"
+//               />
+//               <select
+//                 value={duty[role].status}
+//                 onChange={(e) => handleTechChange(role, 'status', e.target.value)}
+//                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+//               >
+//                 <option value="">Select Status</option>
+//                 {dutyOptions.map((opt) => (
+//                   <option key={opt} value={opt}>{opt}</option>
+//                 ))}
+//               </select>
+//             </div>
+//           ))}
+//         </div>
 
-
-
+//         <button
+//           type="submit"
+//           className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 shadow-md"
+//         >
+//           Next
+//         </button>
+//       </form>
+//     </div>
 
 //     </>
-//   )
-// }
+//   );
+// };
 
-// export default CreateShiftDuty
-
-
+// export default CreateShiftDuty;
 
 
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';  // <-- Import axios
+import Navbar from '../components/Navbar';
 
-
-
-// TO do work in this  back state 2
-
-// import { Link, useNavigate } from "react-router-dom"
-
-// import Navbar from "../components/Navbar"
-// import { useState } from "react"
-// import axios from "axios"
-// import CreatePage from "./CreatePage"
-
-
-
-// const CreateShiftDuty = () => {
-
-//   const navigate = useNavigate()
-
-//   const [data, setData] = useState({
-//       engineer1:"",
-//       engineer2:"",
-//       engineer3:"",
-//       engineer4:"",
-//       engineer5:"",
-//       producer:"",
-//       anchor:"",
-//       camera1:"",
-//       camera2:"",
-//       technician:"",
-//       electrician:""
-   
-//   })
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target
-//     setData({
-//       ...data,
-//       [name]: value
-//     })
-   
-//   }
-
-//   const addShiftDuty = async (e) => {
-//     e.preventDefault()
-//     const response = await axios.post("http://localhost:3000/api/duties", data)
-//     console.log(response);
-//     if (response.status == 200) {
-//       navigate('/create-page')
-//     } else {
-//       alert('Something is wrong ')
-//     }
-
-
-//   }
-//   console.log(data,'final data check check');
-
-
-
-
-
-
-
-
-
-
-//   return (
-
-//     <>
-//     <Navbar/>
-   
-
-//       <div className="w-full bg-white border border-gray-200 rounded-lg p-6 shadow space-y-8 text-sm">
-//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//           {/* On Duty Engineers */}
-//           <div className="bg-blue-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-blue-700 font-bold text-base mb-4">👨‍🔧 On Duty Engineers</h2>
-//             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-//               {[1, 2, 3].map((num) => (
-//                 <div key={num} className="flex flex-col">
-//                   <label htmlFor={`engineer${num}`} className="text-gray-700 text-xs mb-1">Engineer {num}</label>
-//                   <input type="text" id={`engineer${num}`} name={`engineer${num}`} placeholder="Name"  onChange={handleChange}
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-
-//           {/* News Team */}
-//           <div className="bg-yellow-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-yellow-700 font-bold text-base mb-4">📰 News Team</h2>
-//             <div className="grid grid-cols-2 gap-3">
-//               {["Producer", "Anchor"].map((role) => (
-//                 <div key={role} className="flex flex-col">
-//                   <label htmlFor={role.toLowerCase()} className="text-gray-700 text-xs mb-1">{role}</label>
-//                   <input type="text" id={role.toLowerCase()} name={role.toLowerCase()} placeholder="Name" onChange={handleChange}
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-yellow-400" />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-
-//            {/* Cameramen */}
-
-         
-//           <div className="bg-purple-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-purple-700 font-bold text-base mb-4">🎥 Cameramen</h2>
-//             <div className="grid grid-cols-2 gap-3">
-//               {[1, 2].map((num) => (
-//                 <div key={num} className="flex flex-col">
-//                   <label htmlFor={`camera${num}`} className="text-gray-700 text-xs mb-1">Camera {num}</label>
-//                   <input type="text" id={`camera${num}`} name={`camera${num}`} placeholder="Name" onChange={handleChange}
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-400" />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-
-          
-//            {/* Engineers Contd. */}
-
-         
-//           <div className="bg-blue-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-blue-700 font-bold text-base mb-4">👨‍🔧 Engineers (Contd.)</h2>
-//             <div className="grid grid-cols-2 gap-3">
-//               {[4, 5].map((num) => (
-//                 <div key={num} className="flex flex-col">
-//                   <label htmlFor={`engineer${num}`} className="text-gray-700 text-xs mb-1">Engineer {num}</label>
-//                   <input type="text" id={`engineer${num}`} name={`engineer${num}`} placeholder="Name" onChange={handleChange}
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-          
-
-//           {/* Other Staff */}
-//           <div className="bg-green-50 p-4 rounded-md shadow-sm">
-//             <h2 className="text-green-700 font-bold text-base mb-4">🔧 Other Staff</h2>
-//             <div className="grid grid-cols-2 gap-3">
-//               {["Technician", "Electrician"].map((role) => (
-//                 <div key={role} className="flex flex-col">
-//                   <label htmlFor={role.toLowerCase()} className="text-gray-700 text-xs mb-1">{role}</label>
-//                   <input type="text" id={role.toLowerCase()} name={role.toLowerCase()} placeholder="Name" onChange={handleChange}
-//                     className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-400" />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Save Button */}
-//         <div className="text-right">
-//           <button
-//             type="button"
-//             className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md shadow transition duration-200" onClick={addShiftDuty}
-//           >
-//             💾 Save
-//           </button>
-//         </div>
-//       </div>
-
-//       <CreatePage duty={data}/>
-
-
-
-
-//     </>
-//   )
-// }
- 
-// export default CreateShiftDuty
-
-
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import { useState } from "react";
-import axios from "axios";
+const dutyOptions = ['On Duty', 'OffDay Duty', 'Leave', 'Weekly Off','Live Duty','PCR' ,'Others'];
 
 const CreateShiftDuty = () => {
   const navigate = useNavigate();
 
-  const [data, setData] = useState({
-    engineer1: "",
-    engineer2: "",
-    engineer3: "",
-    engineer4: "",
-    engineer5: "",
-    producer: "",
-    anchor: "",
-    camera1: "",
-    camera2: "",
-    technician: "",
-    electrician: "",
+  const [duty, setDuty] = useState({
+    shiftDate: '',
+    shiftTime: '',
+    engineers: Array(6).fill({ name: '', status: '' }),
+    technician: { name: '', status: '' },
+    electrician: { name: '', status: '' }
   });
 
-  const [saved, setSaved] = useState(true); // for displaying duty section after save
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: value,
+  const handleEngineerChange = (index, field, value) => {
+    const updatedEngineers = [...duty.engineers];
+    updatedEngineers[index] = {
+      ...updatedEngineers[index],
+      [field]: value
+    };
+    setDuty({ ...duty, engineers: updatedEngineers });
+  };
+
+  const handleTechChange = (role, field, value) => {
+    setDuty({
+      ...duty,
+      [role]: { ...duty[role], [field]: value }
     });
   };
 
-  const addShiftDuty = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDuty({ ...duty, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    // Prepare payload based on your backend model
+    const payload = {
+      shiftDate: duty.shiftDate,
+      shiftTime: duty.shiftTime,
+      // Extract engineer names and statuses properly
+      engineer1: duty.engineers[0]?.name || '',
+      engineer2: duty.engineers[1]?.name || '',
+      engineer3: duty.engineers[2]?.name || '',
+      engineer4: duty.engineers[3]?.name || '',
+      engineer5: duty.engineers[4]?.name || '',
+      engineer6: duty.engineers[5]?.name || '',
+      // You may want to include statuses or send them as well if backend expects them
+      technician: duty.technician.name || '',
+      electrician: duty.electrician.name || '',
+      // You can send statuses too if backend supports them
+    };
+
     try {
-      const response = await axios.post("http://localhost:3000/api/duties", data);
-      console.log(response);
-      if (response.status === 200) {
-        setSaved(true); // show Shift Duty Details below
-        setTimeout(() => {
-          navigate("/create-page", { state: { duty: data } }); // pass data to technical chart page
-        }, 1000); // slight delay so user sees confirmation
+      const response = await axios.post('http://localhost:3000/api/duties', payload);
+      if (response.status === 201 || response.status === 200) {
+        setLoading(false);
+        navigate('/');  // Redirect after success
       } else {
-        alert("Something went wrong");
+        throw new Error('Failed to create shift duty');
       }
-    } catch (error) {
-      console.error(error);
-      alert("Failed to save duty data.");
+    } catch (err) {
+      setLoading(false);
+      setError(err.response?.data?.message || err.message || 'Error submitting duty');
     }
   };
 
   return (
     <>
       <Navbar />
+      <div className="max-w-5xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-md">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Create Technical Shift Duty</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
 
-      {/* Form Section */}
-      <div className="w-full bg-white border border-gray-200 rounded-lg p-6 shadow space-y-8 text-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Shift Time & Date */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Shift Date</label>
+              <input
+                type="date"
+                name="shiftDate"
+                value={duty.shiftDate}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Shift Time</label>
+              <select
+                name="shiftTime"
+                value={duty.shiftTime}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">Select Shift</option>
+                <option value="Morning">Morning</option>
+                <option value="Evening">Evening</option>
+                <option value="Night">Night</option>
+              </select>
+            </div>
+          </div>
 
-          {/* On Duty Engineers */}
-          <div className="bg-blue-50 p-4 rounded-md shadow-sm">
-            <h2 className="text-blue-700 font-bold text-base mb-4">👨‍🔧 On Duty Engineers</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[1, 2, 3].map((num) => (
-                <div key={num} className="flex flex-col">
-                  <label htmlFor={`engineer${num}`} className="text-gray-700 text-xs mb-1">
-                    Engineer {num}
-                  </label>
+          {/* Engineers */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Engineers (6)</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {duty.engineers.map((engineer, index) => (
+                <div key={index} className="flex flex-col gap-2">
                   <input
                     type="text"
-                    id={`engineer${num}`}
-                    name={`engineer${num}`}
-                    placeholder="Name"
-                    onChange={handleChange}
-                    className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+                    placeholder={`Engineer ${index + 1} Name`}
+                    value={engineer.name}
+                    onChange={(e) => handleEngineerChange(index, 'name', e.target.value)}
+                    className="px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                   />
+                  <select
+                    value={engineer.status}
+                    onChange={(e) => handleEngineerChange(index, 'status', e.target.value)}
+                    className="px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select Status</option>
+                    {dutyOptions.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* News Team */}
-          <div className="bg-yellow-50 p-4 rounded-md shadow-sm">
-            <h2 className="text-yellow-700 font-bold text-base mb-4">📰 News Team</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {["Producer", "Anchor"].map((role) => (
-                <div key={role} className="flex flex-col">
-                  <label htmlFor={role.toLowerCase()} className="text-gray-700 text-xs mb-1">
-                    {role}
-                  </label>
-                  <input
-                    type="text"
-                    id={role.toLowerCase()}
-                    name={role.toLowerCase()}
-                    placeholder="Name"
-                    onChange={handleChange}
-                    className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-yellow-400"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Cameramen */}
-          <div className="bg-purple-50 p-4 rounded-md shadow-sm">
-            <h2 className="text-purple-700 font-bold text-base mb-4">🎥 Cameramen</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {[1, 2].map((num) => (
-                <div key={num} className="flex flex-col">
-                  <label htmlFor={`camera${num}`} className="text-gray-700 text-xs mb-1">
-                    Camera {num}
-                  </label>
-                  <input
-                    type="text"
-                    id={`camera${num}`}
-                    name={`camera${num}`}
-                    placeholder="Name"
-                    onChange={handleChange}
-                    className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-400"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* More Engineers */}
-          <div className="bg-blue-50 p-4 rounded-md shadow-sm">
-            <h2 className="text-blue-700 font-bold text-base mb-4">👨‍🔧 Engineers (Contd.)</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {[4, 5].map((num) => (
-                <div key={num} className="flex flex-col">
-                  <label htmlFor={`engineer${num}`} className="text-gray-700 text-xs mb-1">
-                    Engineer {num}
-                  </label>
-                  <input
-                    type="text"
-                    id={`engineer${num}`}
-                    name={`engineer${num}`}
-                    placeholder="Name"
-                    onChange={handleChange}
-                    className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Other Staff */}
-          <div className="bg-green-50 p-4 rounded-md shadow-sm">
-            <h2 className="text-green-700 font-bold text-base mb-4">🔧 Other Staff</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {["Technician", "Electrician"].map((role) => (
-                <div key={role} className="flex flex-col">
-                  <label htmlFor={role.toLowerCase()} className="text-gray-700 text-xs mb-1">
-                    {role}
-                  </label>
-                  <input
-                    type="text"
-                    id={role.toLowerCase()}
-                    name={role.toLowerCase()}
-                    placeholder="Name"
-                    onChange={handleChange}
-                    className="border px-3 py-2 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-400"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Save Button */}
-        <div className="text-right">
-          <button
-            type="button"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md shadow transition duration-200"
-            onClick={addShiftDuty}
-          >
-            💾 Save
-          </button>
-        </div>
-      </div>
-
-      {/* Shift Duty Preview Section */}
-      {saved && (
-        <div className="mt-10 p-6 rounded-lg shadow bg-gray-50 border border-gray-200">
-          <h2 className="text-xl font-bold mb-4 text-blue-700">📋 🧑‍💼 Shift Duty Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-            {Object.entries(data).map(([key, value]) => (
-              <div key={key} className="bg-white border rounded p-3 shadow">
-                <span className="block text-gray-600 font-medium capitalize">{key.replace(/\d+/, " $&")}</span>
-                <span className="text-gray-800 font-semibold">{value || "-"}</span>
+          {/* Technician & Electrician */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {['technician', 'electrician'].map((role) => (
+              <div key={role}>
+                <label className="block text-gray-700 font-medium mb-1 capitalize">{role}</label>
+                <input
+                  type="text"
+                  placeholder={`${role.charAt(0).toUpperCase() + role.slice(1)} Name`}
+                  value={duty[role].name}
+                  onChange={(e) => handleTechChange(role, 'name', e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 mb-2"
+                />
+                <select
+                  value={duty[role].status}
+                  onChange={(e) => handleTechChange(role, 'status', e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select Status</option>
+                  {dutyOptions.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
               </div>
             ))}
           </div>
-        </div>
-      )}
+
+          {error && (
+            <p className="text-red-600 font-semibold mt-4">{error}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`mt-6 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 shadow-md ${loading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+          >
+            {loading ? 'Submitting...' : 'Next'}
+          </button>
+        </form>
+      </div>
     </>
   );
 };
 
 export default CreateShiftDuty;
+
+
+
+
+

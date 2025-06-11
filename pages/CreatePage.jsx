@@ -457,7 +457,9 @@ const CreatePage = ({ duty }) => {
 
 
         </div>
-        <TechNav />
+
+
+        {/* <TechNav /> */}
 
 
 
@@ -503,7 +505,7 @@ const CreatePage = ({ duty }) => {
         <div className="mt-10">
           <h2 className="text-xl font-bold mb-2 text-indigo-700">📝 Final Technical Chart Preview</h2>
 
-          <div className="mt-10 p-6 rounded-lg shadow bg-gray-50 border border-gray-200">
+          {/* <div className="mt-10 p-6 rounded-lg shadow bg-gray-50 border border-gray-200">
             <h2 className="text-xl font-bold mb-4 text-blue-700">📋
           🧑‍💼 Shift Duty Details </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
@@ -514,7 +516,7 @@ const CreatePage = ({ duty }) => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
 
 
