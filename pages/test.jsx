@@ -1,194 +1,126 @@
-import { useState } from "react";
-import Navbar from "../components/Navbar";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import TechNav from "../components/TechNav";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const CreatePage = ({ duty }) => {
-  const navigate = useNavigate();
-  const SHIFT_DURATION_SECONDS = 8 * 3600;
-
-  const [data, setData] = useState({
-    sn: "",
-    scheduleTime: "",
-    programDetails: "",
-    inTime: "",
-    outTime: "",
-    duration: "",
-    onAirTime: "",
-    remarks: "",
-  });
-
-  const [shift, setShift] = useState("");
-  const [shiftDate, setShiftDate] = useState("");
+const Home = () => {
   const [rosterList, setRosterList] = useState([]);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [shift, setShift] = useState('');
+  const [shiftDate, setShiftDate] = useState('');
+  const [totalDurationFormatted, setTotalDurationFormatted] = useState('');
+  const [underTime, setUnderTime] = useState('');
+  const [overTime, setOverTime] = useState('');
+  const [duty, setDuty] = useState(null);
 
-  const parseTimeWithFrames = (timeStr) => {
-    const [h = 0, m = 0, s = 0, f = 0] = timeStr.split(":").map(Number);
-    return (h * 3600 + m * 60 + s) * 1000 + (f * 1000) / 25;
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // format: YYYY-MM-DD
   };
 
-  const formatTimeWithFrames = (ms) => {
-    const totalSec = Math.floor(ms / 1000);
-    const f = Math.floor((ms % 1000) / (1000 / 25));
-    const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
-    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
-    const s = String(totalSec % 60).padStart(2, "0");
-    const ff = String(f).padStart(2, "0");
-    return `${h}:${m}:${s}:${ff}`;
-  };
+  useEffect(() => {
+    const fetchRoster = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/roster');
+        const rosterData = response.data.rosters;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData((prev) => ({ ...prev, [name]: value }));
+        console.log(rosterData, 'Fetched roster data');
 
-    if (name === "inTime" || name === "outTime") {
-      const inMs = parseTimeWithFrames(name === "inTime" ? value : data.inTime);
-      const outMs = parseTimeWithFrames(name === "outTime" ? value : data.outTime);
-      if (!isNaN(inMs) && !isNaN(outMs)) {
-        const durationMs = Math.max(0, outMs - inMs);
-        const formatted = formatTimeWithFrames(durationMs);
-        setData((prev) => ({ ...prev, duration: formatted }));
+        const today = getTodayDate();
+
+        const todayRosters = rosterData.filter(r => {
+          const dateStr = new Date(r.shiftDate).toISOString().split('T')[0];
+          return dateStr === today;
+        });
+
+        if (todayRosters.length > 0) {
+          setRosterList(todayRosters);
+          setShift(todayRosters[0].shift || '');
+          setShiftDate(todayRosters[0].shiftDate || '');
+          setTotalDurationFormatted(todayRosters[0].totalDuration || '');
+          setUnderTime(todayRosters[0].underTime || '');
+          setOverTime(todayRosters[0].overTime || '');
+          setDuty(todayRosters[0].duty || null);
+        } else {
+          // fallback to show all if no data for today
+          setRosterList(rosterData);
+          if (rosterData.length > 0) {
+            setShift(rosterData[0].shift || '');
+            setShiftDate(rosterData[0].shiftDate || '');
+            setTotalDurationFormatted(rosterData[0].totalDuration || '');
+            setUnderTime(rosterData[0].underTime || '');
+            setOverTime(rosterData[0].overTime || '');
+            setDuty(rosterData[0].duty || null);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching roster data:', err);
       }
-    }
-  };
-
-  const addProgramToChart = () => {
-    if (!shift || !shiftDate) {
-      setErrorMsg("Shift and Shift Date must be selected.");
-      return;
-    }
-    if (!data.sn || !data.programDetails) {
-      setErrorMsg("SN and Program Details are required.");
-      return;
-    }
-    if (rosterList.find((item) => item.sn === data.sn)) {
-      setErrorMsg(`SN ${data.sn} already exists.`);
-      return;
-    }
-
-    let newData = {
-      ...data,
-      shift,
-      shiftDate,
     };
 
-    if (rosterList.length === 0) {
-      newData.onAirTime = data.scheduleTime;
-    } else {
-      const prev = rosterList[rosterList.length - 1];
-      const prevOnAirMs = parseTimeWithFrames(prev.onAirTime);
-      const prevDurationMs = parseTimeWithFrames(prev.duration);
-      const nextScheduleMs = prevOnAirMs + prevDurationMs;
-      const nextSchedule = formatTimeWithFrames(nextScheduleMs);
-      newData.scheduleTime = nextSchedule;
-      newData.onAirTime = nextSchedule;
-    }
-
-    setRosterList([...rosterList, newData]);
-
-    setData({
-      sn: "",
-      scheduleTime: newData.scheduleTime,
-      programDetails: "",
-      inTime: "",
-      outTime: "",
-      duration: "",
-      onAirTime: newData.onAirTime,
-      remarks: "",
-    });
-    setErrorMsg("");
-  };
-
-  const calculateTotalDuration = () => {
-    return rosterList.reduce((sum, item) => {
-      const ms = parseTimeWithFrames(item.duration);
-      return sum + Math.floor(ms / 1000);
-    }, 0);
-  };
-
-  const calculateDiff = (seconds) => {
-    const abs = Math.abs(seconds);
-    const h = String(Math.floor(abs / 3600)).padStart(2, "0");
-    const m = String(Math.floor((abs % 3600) / 60)).padStart(2, "0");
-    const s = String(abs % 60).padStart(2, "0");
-    return `${h}:${m}:${s}:00`;
-  };
-
-  const diff = calculateTotalDuration() - SHIFT_DURATION_SECONDS;
-  const underTime = diff < 0 ? calculateDiff(diff) : "00:00:00:00";
-  const overTime = diff > 0 ? calculateDiff(diff) : "00:00:00:00";
-  const totalDurationFormatted = calculateDiff(calculateTotalDuration());
-
-  const submitTechnicalChart = async () => {
-    try {
-      const submission = rosterList.map((entry) => ({
-        ...entry,
-        totalDuration: totalDurationFormatted,
-      }));
-
-      for (let entry of submission) {
-        await axios.post("http://localhost:3000/api/roster", entry);
-      }
-
-      alert("Technical Chart Submitted Successfully");
-      navigate("/");
-    } catch (err) {
-      console.error("Submission failed:", err);
-      setErrorMsg("Failed to submit the technical chart.");
-    }
-  };
+    fetchRoster();
+  }, []);
 
   return (
-    <>
-      <Navbar />
-      <div className="p-6">
-        <div className="flex gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Shift</label>
-            <select
-              value={shift}
-              onChange={(e) => setShift(e.target.value)}
-              className="border rounded px-2 py-1 text-sm w-48"
-            >
-              <option value="">-- Select Shift --</option>
-              <option value="Morning">Morning (5AM - 1PM)</option>
-              <option value="Evening">Evening (1PM - 9PM)</option>
-              <option value="Mid-night">Mid-night (9PM - 5AM)</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Shift Date</label>
-            <input
-              type="date"
-              value={shiftDate}
-              onChange={(e) => setShiftDate(e.target.value)}
-              className="border rounded px-2 py-1 text-sm"
-            />
-          </div>
+
+
+    <div className="p-4 max-w-7xl mx-auto">
+      <h2 className="text-2xl font-bold text-green-700 mb-4">Final Technical Chart Preview</h2>
+
+      {/* Shift Info */}
+      {shift && shiftDate && (
+        <div className="mb-4 p-4 bg-gray-100 rounded-lg shadow">
+          <p className="text-md font-semibold text-gray-700">
+            Shift: <span className="text-green-700">{shift}</span> | Date:{' '}
+            <span className="text-green-700">{shiftDate}</span>
+          </p>
+          <p className="text-sm text-gray-600 mt-1">
+            Total Duration: <span className="font-medium">{totalDurationFormatted}</span> | Under Time:{' '}
+            <span className="font-medium">{underTime}</span> | Over Time: <span className="font-medium">{overTime}</span>
+          </p>
         </div>
+      )}
 
-        <TechNav />
-
-        {/* Final Technical Chart Preview */}
-        {/* Existing UI here for Technical Chart Preview */}
-
-        {/* 🧑‍💼 Shift Duty Details */}
-        <div className="mt-10 p-6 rounded-lg shadow bg-gray-50 border border-gray-200">
-          <h2 className="text-xl font-bold mb-4 text-blue-700">📋 Shift Duty Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-            {Object.entries(duty || {}).map(([key, value]) => (
-              <div key={key} className="bg-white border rounded p-3 shadow">
-                <span className="block text-gray-600 font-medium capitalize">{key.replace(/\d+/, ' $&')}</span>
-                <span className="text-gray-800 font-semibold">{value}</span>
-              </div>
+      {/* Technical Chart Table */}
+      <div className="overflow-x-auto rounded-lg shadow">
+        <table className="w-full border border-gray-300">
+          <thead className="bg-green-600 text-white text-xs">
+            <tr>
+              <th className="p-2 text-left">SN</th>
+              <th className="p-2 text-left">Schedule Time</th>
+              <th className="p-2 text-left">Program Details</th>
+              <th className="p-2 text-left">In Time</th>
+              <th className="p-2 text-left">Out Time</th>
+              <th className="p-2 text-left">Duration</th>
+              <th className="p-2 text-left">On Air Time</th>
+              <th className="p-2 text-left">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rosterList.map((item, i) => (
+              <tr key={i} className="odd:bg-white even:bg-gray-50 text-sm">
+                <td className="p-2">{item.sn}</td>
+                <td className="p-2">{item.scheduleTime}</td>
+                <td className="p-2">{item.programDetails}</td>
+                <td className="p-2">{item.inTime}</td>
+                <td className="p-2">{item.outTime}</td>
+                <td className="p-2">{item.duration}</td>
+                <td className="p-2">{item.onAirTime}</td>
+                <td className="p-2">{item.remarks}</td>
+              </tr>
             ))}
-          </div>
-        </div>
+          </tbody>
+        </table>
       </div>
-    </>
+
+      
+   
+   
+   
+    </div>
+
+
+
+
+
   );
 };
 
-export default CreatePage;
+export default Home;
