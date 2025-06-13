@@ -25,6 +25,7 @@ const HomePage = () => {
     const fetchDuties = async () => {
       try {
         const response = await axios.get('http://localhost:3000/api/duties');
+        console.log(response.data.duties);
         const dutiesFromBackend = response.data.duties.map(duty => ({
           ...duty,
           engineers: [
@@ -64,7 +65,7 @@ const HomePage = () => {
     return date.toISOString().split('T')[0];
   };
 
-  const shifts = ['Morning', 'Evening', 'Night'];
+  const shifts = ['Morning', 'Evening', 'Midnight'];
 
   // Filter shift duties and technical chart data based on selected date
   const filteredDuties = shiftDuties.filter(
@@ -88,7 +89,7 @@ const HomePage = () => {
       <Navbar />
 
       <div className="max-w-7xl mx-auto p-6 mt-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Shift Duty Overview</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">Engineering Duty Schedule</h1>
 
         {/* Date Picker */}
         <div className="mb-6">
@@ -124,15 +125,15 @@ const HomePage = () => {
 
                 {/* Engineers */}
                 <div className="mb-4">
-                  <h3 className="text-md font-semibold mb-2">Engineers</h3>
+                  <h3 className="text-xl font-semibold mb-2">Engineers</h3>
                   <div className="grid grid-cols-1 gap-2">
                     {duty.engineers.map((eng, i) => (
                       <div
                         key={i}
                         className="p-2 bg-white rounded shadow text-sm border border-gray-200"
                       >
-                        <p className="font-medium text-gray-800">{eng.name}</p>
-                        <p className="text-gray-500 italic">{eng.status}</p>
+                        <p className="font-medium text-green-800 text-2xl" >{eng.name}</p>
+                        <p className="text-red-500 italic">{eng.status}</p>
                       </div>
                     ))}
                   </div>
@@ -159,7 +160,7 @@ const HomePage = () => {
 
       {/* Technical Chart Preview for Selected Date */}
       <div className="max-w-7xl mx-auto p-6">
-        <h2 className="text-2xl font-bold text-green-700 mb-4">Final Technical Chart Preview</h2>
+        <h2 className="text-5xl font-bold  text-blue-800 mb-4">Tody's Technical Chart </h2>
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Date: {selectedDate}</h3>
 
         {shifts.map(shift => {
@@ -168,7 +169,7 @@ const HomePage = () => {
 
           return (
             <div key={shift} className="mb-6 border rounded shadow bg-white">
-              <div className="bg-green-100 px-4 py-2 border-b font-medium text-green-700">
+              <div className="bg-green-700 px-4 py-2 border-b font-bold text-3xl text-white">
                 {shift} Shift
               </div>
               <div className="overflow-x-auto">

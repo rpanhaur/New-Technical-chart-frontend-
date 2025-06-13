@@ -717,7 +717,7 @@ const CreatePage = ({ duty }) => {
               <option value="">-- Select Shift --</option>
               <option value="Morning">Morning (5AM - 1PM)</option>
               <option value="Evening">Evening (1PM - 9PM)</option>
-              <option value="Mid-night">Mid-night (9PM - 5AM)</option>
+              <option value="Midnight">MidNight (9PM - 5AM)</option>
             </select>
           </div>
           <div>

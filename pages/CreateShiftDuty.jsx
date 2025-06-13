@@ -213,6 +213,8 @@ const CreateShiftDuty = () => {
     electrician: { name: '', status: '' }
   });
 
+  console.log('check check shift time', duty.shiftTime);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -242,22 +244,7 @@ const CreateShiftDuty = () => {
     setError('');
     setLoading(true);
 
-    // Prepare payload based on your backend model
-    // const payload = {
-    //   shiftDate: duty.shiftDate,
-    //   shiftTime: duty.shiftTime,
-    //   // Extract engineer names and statuses properly
-    //   engineer1: duty.engineers[0]?.name || '',
-    //   engineer2: duty.engineers[1]?.name || '',
-    //   engineer3: duty.engineers[2]?.name || '',
-    //   engineer4: duty.engineers[3]?.name || '',
-    //   engineer5: duty.engineers[4]?.name || '',
-    //   engineer6: duty.engineers[5]?.name || '',
-    //   // You may want to include statuses or send them as well if backend expects them
-    //   technician: duty.technician.name || '',
-    //   electrician: duty.electrician.name || '',
-    //   // You can send statuses too if backend supports them
-    // };
+    
 
     const payload = {
       shiftDate: duty.shiftDate,
@@ -332,7 +319,7 @@ const CreateShiftDuty = () => {
                 <option value="">Select Shift</option>
                 <option value="Morning">Morning</option>
                 <option value="Evening">Evening</option>
-                <option value="Night">Night</option>
+                <option value="Midnight">Midnight</option>
               </select>
             </div>
           </div>
