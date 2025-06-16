@@ -1,1 +1,5 @@
 @import "tailwindcss";
+/* Ensures vertical scrollbar space is always reserved */
+body {
+  overflow-y: scroll;
+}
