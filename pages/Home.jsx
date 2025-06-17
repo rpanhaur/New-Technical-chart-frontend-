@@ -1,11 +1,10 @@
 
-
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 // import Navbar from '../components/Navbar';
 // import { motion, AnimatePresence } from 'framer-motion';
 // import jsPDF from 'jspdf';
-// import autoTable from 'jspdf-autotable'; // ✅ Correct import for Vite
+// import autoTable from 'jspdf-autotable';
 
 // // Color configurations for Shift Duty Cards
 // const shiftColors = {
@@ -21,7 +20,7 @@
 //   Midnight: 'bg-gray-600',
 // };
 
-// // Parse duration string like "HH:MM:SS" or "HH:MM:SS:FF" to seconds for comparison
+// // Utility: Parse duration string like "HH:MM:SS" to seconds
 // const durationToSeconds = (duration) => {
 //   if (!duration) return 0;
 //   const parts = duration.split(':');
@@ -32,7 +31,7 @@
 //   return hours * 3600 + minutes * 60 + seconds;
 // };
 
-// // Sum durations array to "HH:MM:SS" string
+// // Utility: Sum durations array to "HH:MM:SS" string
 // const sumDurations = (durations) => {
 //   let totalSeconds = durations.reduce((acc, d) => acc + durationToSeconds(d), 0);
 //   const hours = Math.floor(totalSeconds / 3600);
@@ -43,11 +42,16 @@
 // };
 
 // const HomePage = () => {
+//   // Helper: Format today's date as YYYY-MM-DD
 //   const getTodayDate = () => {
 //     const today = new Date();
-//     return today.toISOString().split('T')[0];
+//     const year = today.getFullYear();
+//     const month = String(today.getMonth() + 1).padStart(2, '0');
+//     const day = String(today.getDate()).padStart(2, '0');
+//     return `${year}-${month}-${day}`;
 //   };
 
+//   // State Management
 //   const [selectedDate, setSelectedDate] = useState(getTodayDate());
 //   const [shiftDuties, setShiftDuties] = useState([]);
 //   const [rosterList, setRosterList] = useState([]);
@@ -57,6 +61,7 @@
 //   const [expandedChartShifts, setExpandedChartShifts] = useState({});
 //   const [searchText, setSearchText] = useState('');
 
+//   // Fetch Shift Duties
 //   useEffect(() => {
 //     const fetchDuties = async () => {
 //       try {
@@ -64,15 +69,15 @@
 //         const dutiesFromBackend = response.data.duties.map((duty) => ({
 //           ...duty,
 //           engineers: [
-//             { name: duty.engineer1 || '', status: duty.engineer1Status },
-//             { name: duty.engineer2 || '', status: duty.engineer2Status },
-//             { name: duty.engineer3 || '', status: duty.engineer3Status },
-//             { name: duty.engineer4 || '', status: duty.engineer4Status },
-//             { name: duty.engineer5 || '', status: duty.engineer5Status },
-//             { name: duty.engineer6 || '', status: duty.engineer6Status },
-//           ].filter((e) => e.name !== ''),
-//           technician: { name: duty.technician || 'N/A', status: duty.technicianStatus },
-//           electrician: { name: duty.electrician || 'N/A', status: duty.electricianStatus },
+//             { name: duty.engineer1 || '', status: duty.engineer1Status || 'N/A' },
+//             { name: duty.engineer2 || '', status: duty.engineer2Status || 'N/A' },
+//             { name: duty.engineer3 || '', status: duty.engineer3Status || 'N/A' },
+//             { name: duty.engineer4 || '', status: duty.engineer4Status || 'N/A' },
+//             { name: duty.engineer5 || '', status: duty.engineer5Status || 'N/A' },
+//             { name: duty.engineer6 || '', status: duty.engineer6Status || 'N/A' },
+//           ].filter((e) => e.name.trim() !== ''),
+//           technician: { name: duty.technician || 'N/A', status: duty.technicianStatus || 'N/A' },
+//           electrician: { name: duty.electrician || 'N/A', status: duty.electricianStatus || 'N/A' },
 //         }));
 //         setShiftDuties(dutiesFromBackend);
 //       } catch (err) {
@@ -95,25 +100,27 @@
 //     fetchRoster();
 //   }, []);
 
+//   // Local Date Formatter
 //   const toLocalDateString = (utcDateString) => {
 //     if (!utcDateString) return '';
 //     const date = new Date(utcDateString);
 //     return date.toISOString().split('T')[0];
 //   };
 
+//   // Shifts
 //   const shifts = ['Morning', 'Evening', 'Midnight'];
+
+//   // Filtered Data
 //   const filteredDuties = shiftDuties.filter(
 //     (duty) => toLocalDateString(duty.shiftDate) === selectedDate
 //   );
 
-//   // Filter roster by date and search text (case insensitive)
 //   const filteredRoster = rosterList.filter(
 //     (item) =>
 //       toLocalDateString(item.shiftDate) === selectedDate &&
 //       item.programDetails?.toLowerCase().includes(searchText.toLowerCase())
 //   );
 
-//   // Group technical charts by shift
 //   const groupedTechnicalCharts = filteredRoster.reduce((acc, item) => {
 //     const shift = item.shift;
 //     if (!acc[shift]) acc[shift] = [];
@@ -121,6 +128,7 @@
 //     return acc;
 //   }, {});
 
+//   // Toggle Expand/Collapse for Chart Sections
 //   const toggleChartShift = (shift) => {
 //     setExpandedChartShifts((prev) => ({
 //       ...prev,
@@ -128,25 +136,19 @@
 //     }));
 //   };
 
-//   // ✅ Fixed PDF Export Function
+//   // ✅ PDF Export Function for Technical Chart (Single Shift)
 //   const exportToPDF = (shift) => {
 //     try {
 //       const doc = new jsPDF();
 //       const items = groupedTechnicalCharts[shift] || [];
-      
-//       // Debug: Check data structure
-//       console.log('Exporting data:', items);
-      
 //       if (items.length === 0) {
 //         alert('No data available for this shift to export.');
 //         return;
 //       }
 
-//       // Add title
 //       doc.setFontSize(18);
 //       doc.text(`${shift} Shift Technical Chart - ${selectedDate}`, 14, 22);
 
-//       // Define table headers
 //       const tableColumn = [
 //         'SN',
 //         'Schedule Time',
@@ -158,7 +160,6 @@
 //         'Remarks',
 //       ];
 
-//       // Map data with fallbacks for undefined values
 //       const tableRows = items.map((item) => [
 //         item.sn || '',
 //         item.scheduleTime || '',
@@ -170,7 +171,6 @@
 //         item.remarks || '',
 //       ]);
 
-//       // Generate PDF table ✅ Use the autoTable function directly
 //       autoTable(doc, {
 //         head: [tableColumn],
 //         body: tableRows,
@@ -179,7 +179,6 @@
 //         headStyles: { fillColor: [41, 128, 185] },
 //       });
 
-//       // Save the PDF
 //       doc.save(`${shift}_Technical_Chart_${selectedDate}.pdf`);
 //     } catch (err) {
 //       console.error('PDF Export Error:', err);
@@ -187,12 +186,89 @@
 //     }
 //   };
 
+//   // ✅ PDF Export Function for Engineering Duty Schedule (All Shifts)
+//   const exportDutyScheduleToPDF = () => {
+//     try {
+//       const doc = new jsPDF();
+
+//       shifts.forEach((shift, index) => {
+//         const duty = filteredDuties.find((d) => d.shiftTime === shift);
+//         if (!duty) return;
+
+//         if (index > 0) doc.addPage(); // New page for each shift
+
+//         // Title
+//         doc.setFontSize(18);
+//         doc.setTextColor(0, 0, 0);
+//         doc.text(`${shift} Shift - Engineering Duty Schedule`, 14, 20);
+
+//         // Date
+//         doc.setFontSize(12);
+//         doc.text(`Date: ${selectedDate}`, 14, 30);
+
+//         // Engineers
+//         doc.setFontSize(14);
+//         doc.text("Engineers", 14, 45);
+//         const engineerData = duty.engineers.map(e => [e.name, e.status]);
+//         autoTable(doc, {
+//           head: [['Name', 'Status']],
+//           body: engineerData,
+//           startY: 50,
+//           styles: { fontSize: 10 },
+//           headStyles: { fillColor: shift === 'Morning' ? [41, 128, 185] : shift === 'Evening' ? [127, 63, 152] : [128, 128, 128] }
+//         });
+
+//         let lastY = doc.lastAutoTable.finalY + 10;
+
+//         // Technician
+//         doc.setFontSize(14);
+//         doc.text("Technician", 14, lastY);
+//         autoTable(doc, {
+//           body: [[duty.technician.name, duty.technician.status]],
+//           startY: lastY + 5,
+//           styles: { fontSize: 10 },
+//           headStyles: { fillColor: [39, 174, 96] }
+//         });
+
+//         lastY = doc.lastAutoTable.finalY + 10;
+
+//         // Electrician
+//         doc.setFontSize(14);
+//         doc.text("Electrician", 14, lastY);
+//         autoTable(doc, {
+//           body: [[duty.electrician.name, duty.electrician.status]],
+//           startY: lastY + 5,
+//           styles: { fontSize: 10 },
+//           headStyles: { fillColor: [241, 196, 15] }
+//         });
+//       });
+
+//       doc.save(`Engineering_Duty_Schedule_Report_${selectedDate}.pdf`);
+//     } catch (err) {
+//       console.error('Duty Schedule PDF Export Error:', err);
+//       alert('Failed to generate Engineering Duty Schedule PDF. Check console for details.');
+//     }
+//   };
+
+//   // Loading State
 //   if (loading) return <div className="text-center mt-20 text-gray-500">Loading...</div>;
 //   if (error) return <div className="text-center mt-20 text-red-600">{error}</div>;
 
 //   return (
 //     <>
 //       <Navbar />
+
+//       {/* Export Engineering Duty Schedule Button */}
+//       <div className="max-w-7xl mx-auto px-6 mt-10">
+//         <button
+//           onClick={exportDutyScheduleToPDF}
+//           className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+//         >
+//           Export Engineering Duty Schedule Report
+//         </button>
+//       </div>
+
+//       {/* Existing UI Below */}
 //       <div className="max-w-7xl mx-auto px-6 mt-10">
 //         {/* Page Title and Toggle */}
 //         <div className="flex justify-between items-center mb-6">
@@ -204,7 +280,7 @@
 //             {expandedDutySection ? 'Hide Duty' : 'Show Duty'}
 //           </button>
 //         </div>
-        
+
 //         {/* Date Picker */}
 //         <div className="mb-6">
 //           <label className="block text-sm font-medium text-gray-700 mb-1">Select Date:</label>
@@ -215,7 +291,7 @@
 //             className="px-3 py-2 border border-gray-300 rounded-md shadow-sm"
 //           />
 //         </div>
-        
+
 //         {/* Shift Duties Section */}
 //         <AnimatePresence>
 //           {expandedDutySection && (
@@ -229,7 +305,9 @@
 //               {shifts.map((shiftTime) => {
 //                 const duty = filteredDuties.find((d) => d.shiftTime === shiftTime);
 //                 if (!duty) return null;
+
 //                 const shiftColor = shiftColors[duty.shiftTime] || 'bg-white border-gray-300';
+
 //                 return (
 //                   <div key={shiftTime} className={`rounded-xl shadow-md border-2 ${shiftColor}`}>
 //                     <div className="p-5">
@@ -251,6 +329,7 @@
 //                           ))}
 //                         </div>
 //                       </div>
+
 //                       <div className="space-y-4">
 //                         <div className="bg-green-100 p-3 rounded border-l-4 border-green-500">
 //                           <h4 className="font-semibold">Technician</h4>
@@ -271,12 +350,11 @@
 //           )}
 //         </AnimatePresence>
 //       </div>
-      
+
 //       {/* Technical Chart Section */}
 //       <div className="max-w-7xl mx-auto px-6 mb-10">
 //         <div className="flex justify-between items-center mb-2">
 //           <h2 className="text-4xl font-bold text-blue-800">Today's Technical Chart</h2>
-//           {/* Search Box */}
 //           <input
 //             type="text"
 //             placeholder="Search by Program Details"
@@ -286,12 +364,14 @@
 //           />
 //         </div>
 //         <h3 className="text-lg font-semibold text-gray-700 mb-4">Date: {selectedDate}</h3>
+
 //         {shifts.map((shift) => {
 //           const items = groupedTechnicalCharts[shift];
 //           if (!items || items.length === 0) return null;
-//           // Calculate total duration for this shift
+
 //           const totalDuration = sumDurations(items.map((i) => i.duration));
 //           const chartHeaderClass = chartHeaderColors[shift] || 'bg-green-700';
+
 //           return (
 //             <div key={shift} className="mb-8 border rounded shadow bg-white">
 //               <div
@@ -300,9 +380,7 @@
 //               >
 //                 <span>{shift} Shift</span>
 //                 <div className="flex items-center space-x-4">
-//                   <span>
-//                     Total Duration: <strong>{totalDuration}</strong>
-//                   </span>
+//                   <span>Total Duration: <strong>{totalDuration}</strong></span>
 //                   <button
 //                     onClick={(e) => {
 //                       e.stopPropagation();
@@ -314,6 +392,7 @@
 //                   </button>
 //                 </div>
 //               </div>
+
 //               <AnimatePresence>
 //                 {expandedChartShifts[shift] && (
 //                   <motion.div
@@ -345,6 +424,7 @@
 //                             : rowStatus.includes('completed')
 //                             ? 'bg-green-100'
 //                             : 'bg-white';
+
 //                           return (
 //                             <tr
 //                               key={i}
@@ -383,7 +463,7 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'; // ✅ Correct import for Vite
+import autoTable from 'jspdf-autotable';
 
 // Color configurations for Shift Duty Cards
 const shiftColors = {
@@ -399,7 +479,7 @@ const chartHeaderColors = {
   Midnight: 'bg-gray-600',
 };
 
-// Parse duration string like "HH:MM:SS" to seconds
+// Utility: Parse duration string like "HH:MM:SS" to seconds
 const durationToSeconds = (duration) => {
   if (!duration) return 0;
   const parts = duration.split(':');
@@ -410,7 +490,7 @@ const durationToSeconds = (duration) => {
   return hours * 3600 + minutes * 60 + seconds;
 };
 
-// Sum durations array to "HH:MM:SS" string
+// Utility: Sum durations array to "HH:MM:SS" string
 const sumDurations = (durations) => {
   let totalSeconds = durations.reduce((acc, d) => acc + durationToSeconds(d), 0);
   const hours = Math.floor(totalSeconds / 3600);
@@ -421,15 +501,16 @@ const sumDurations = (durations) => {
 };
 
 const HomePage = () => {
-  // ✅ Fix: Use local date format for date picker
+  // Helper: Format today's date as YYYY-MM-DD
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
+  // State Management
   const [selectedDate, setSelectedDate] = useState(getTodayDate());
   const [shiftDuties, setShiftDuties] = useState([]);
   const [rosterList, setRosterList] = useState([]);
@@ -439,6 +520,7 @@ const HomePage = () => {
   const [expandedChartShifts, setExpandedChartShifts] = useState({});
   const [searchText, setSearchText] = useState('');
 
+  // Fetch Shift Duties
   useEffect(() => {
     const fetchDuties = async () => {
       try {
@@ -446,15 +528,15 @@ const HomePage = () => {
         const dutiesFromBackend = response.data.duties.map((duty) => ({
           ...duty,
           engineers: [
-            { name: duty.engineer1 || '', status: duty.engineer1Status },
-            { name: duty.engineer2 || '', status: duty.engineer2Status },
-            { name: duty.engineer3 || '', status: duty.engineer3Status },
-            { name: duty.engineer4 || '', status: duty.engineer4Status },
-            { name: duty.engineer5 || '', status: duty.engineer5Status },
-            { name: duty.engineer6 || '', status: duty.engineer6Status },
-          ].filter((e) => e.name !== ''),
-          technician: { name: duty.technician || 'N/A', status: duty.technicianStatus },
-          electrician: { name: duty.electrician || 'N/A', status: duty.electricianStatus },
+            { name: duty.engineer1 || '', status: duty.engineer1Status || 'N/A' },
+            { name: duty.engineer2 || '', status: duty.engineer2Status || 'N/A' },
+            { name: duty.engineer3 || '', status: duty.engineer3Status || 'N/A' },
+            { name: duty.engineer4 || '', status: duty.engineer4Status || 'N/A' },
+            { name: duty.engineer5 || '', status: duty.engineer5Status || 'N/A' },
+            { name: duty.engineer6 || '', status: duty.engineer6Status || 'N/A' },
+          ].filter((e) => e.name.trim() !== ''),
+          technician: { name: duty.technician || 'N/A', status: duty.technicianStatus || 'N/A' },
+          electrician: { name: duty.electrician || 'N/A', status: duty.electricianStatus || 'N/A' },
         }));
         setShiftDuties(dutiesFromBackend);
       } catch (err) {
@@ -477,25 +559,27 @@ const HomePage = () => {
     fetchRoster();
   }, []);
 
+  // Local Date Formatter
   const toLocalDateString = (utcDateString) => {
     if (!utcDateString) return '';
     const date = new Date(utcDateString);
     return date.toISOString().split('T')[0];
   };
 
+  // Shifts
   const shifts = ['Morning', 'Evening', 'Midnight'];
+
+  // Filtered Data
   const filteredDuties = shiftDuties.filter(
     (duty) => toLocalDateString(duty.shiftDate) === selectedDate
   );
 
-  // Filter roster by date and search text
   const filteredRoster = rosterList.filter(
     (item) =>
       toLocalDateString(item.shiftDate) === selectedDate &&
       item.programDetails?.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  // Group technical charts by shift
   const groupedTechnicalCharts = filteredRoster.reduce((acc, item) => {
     const shift = item.shift;
     if (!acc[shift]) acc[shift] = [];
@@ -503,6 +587,7 @@ const HomePage = () => {
     return acc;
   }, {});
 
+  // Toggle Expand/Collapse for Chart Sections
   const toggleChartShift = (shift) => {
     setExpandedChartShifts((prev) => ({
       ...prev,
@@ -510,22 +595,19 @@ const HomePage = () => {
     }));
   };
 
-  // ✅ PDF Export Function
+  // ✅ PDF Export Function for Technical Chart (Single Shift)
   const exportToPDF = (shift) => {
     try {
       const doc = new jsPDF();
       const items = groupedTechnicalCharts[shift] || [];
-
       if (items.length === 0) {
         alert('No data available for this shift to export.');
         return;
       }
 
-      // Add title
       doc.setFontSize(18);
       doc.text(`${shift} Shift Technical Chart - ${selectedDate}`, 14, 22);
 
-      // Define table headers
       const tableColumn = [
         'SN',
         'Schedule Time',
@@ -537,7 +619,6 @@ const HomePage = () => {
         'Remarks',
       ];
 
-      // Map data with fallbacks for undefined values
       const tableRows = items.map((item) => [
         item.sn || '',
         item.scheduleTime || '',
@@ -549,7 +630,6 @@ const HomePage = () => {
         item.remarks || '',
       ]);
 
-      // Generate PDF table ✅ Use autoTable(doc, ...) for Vite compatibility
       autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
@@ -558,7 +638,6 @@ const HomePage = () => {
         headStyles: { fillColor: [41, 128, 185] },
       });
 
-      // Save the PDF
       doc.save(`${shift}_Technical_Chart_${selectedDate}.pdf`);
     } catch (err) {
       console.error('PDF Export Error:', err);
@@ -566,12 +645,101 @@ const HomePage = () => {
     }
   };
 
+  // ✅ PDF Export Function for Engineering Duty Schedule (All Shifts on One Page)
+  const exportDutyScheduleToPDF = () => {
+    try {
+      const doc = new jsPDF();
+      let startY = 20; // Start position for first shift
+
+      shifts.forEach((shift, index) => {
+        const duty = filteredDuties.find((d) => d.shiftTime === shift);
+        if (!duty) return; // Skip if no data
+
+        // Title
+        doc.setFontSize(16);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`${shift} Shift - Engineering Duty Schedule`, 14, startY);
+        startY += 8;
+
+        // Date
+        doc.setFontSize(12);
+        doc.text(`Date: ${selectedDate}`, 14, startY);
+        startY += 10;
+
+        // Engineers
+        doc.setFontSize(14);
+        doc.text("Engineers", 14, startY);
+        startY += 6;
+
+        const engineerData = duty.engineers.map(e => [e.name, e.status]);
+        autoTable(doc, {
+          head: [['Name', 'Status']],
+          body: engineerData,
+          startY,
+          styles: { fontSize: 10 },
+          headStyles: {
+            fillColor: shift === 'Morning' ? [41, 128, 185] : 
+                       shift === 'Evening' ? [127, 63, 152] : [128, 128, 128]
+          }
+        });
+
+        startY = doc.lastAutoTable.finalY + 8;
+
+        // Technician
+        doc.setFontSize(14);
+        doc.text("Technician", 14, startY);
+        startY += 6;
+
+        autoTable(doc, {
+          body: [[duty.technician.name, duty.technician.status]],
+          startY,
+          styles: { fontSize: 10 },
+          headStyles: { fillColor: [39, 174, 96] }
+        });
+
+        startY = doc.lastAutoTable.finalY + 8;
+
+        // Electrician
+        doc.setFontSize(14);
+        doc.text("Electrician", 14, startY);
+        startY += 6;
+
+        autoTable(doc, {
+          body: [[duty.electrician.name, duty.electrician.status]],
+          startY,
+          styles: { fontSize: 10 },
+          headStyles: { fillColor: [241, 196, 15] }
+        });
+
+        startY = doc.lastAutoTable.finalY + 15;
+      });
+
+      doc.save(`Engineering_Duty_Schedule_Report_${selectedDate}.pdf`);
+    } catch (err) {
+      console.error('Duty Schedule PDF Export Error:', err);
+      alert('Failed to generate Engineering Duty Schedule PDF. Check console for details.');
+    }
+  };
+
+  // Loading State
   if (loading) return <div className="text-center mt-20 text-gray-500">Loading...</div>;
   if (error) return <div className="text-center mt-20 text-red-600">{error}</div>;
 
   return (
     <>
       <Navbar />
+
+      {/* Add Export Engineering Duty Schedule Button */}
+      <div className="max-w-7xl mx-auto px-6 mt-10">
+        <button
+          onClick={exportDutyScheduleToPDF}
+          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+        >
+          Export Engineering Duty Schedule Report
+        </button>
+      </div>
+
+      {/* Existing UI Below */}
       <div className="max-w-7xl mx-auto px-6 mt-10">
         {/* Page Title and Toggle */}
         <div className="flex justify-between items-center mb-6">
@@ -608,7 +776,9 @@ const HomePage = () => {
               {shifts.map((shiftTime) => {
                 const duty = filteredDuties.find((d) => d.shiftTime === shiftTime);
                 if (!duty) return null;
+
                 const shiftColor = shiftColors[duty.shiftTime] || 'bg-white border-gray-300';
+
                 return (
                   <div key={shiftTime} className={`rounded-xl shadow-md border-2 ${shiftColor}`}>
                     <div className="p-5">
@@ -630,6 +800,7 @@ const HomePage = () => {
                           ))}
                         </div>
                       </div>
+
                       <div className="space-y-4">
                         <div className="bg-green-100 p-3 rounded border-l-4 border-green-500">
                           <h4 className="font-semibold">Technician</h4>
@@ -655,7 +826,6 @@ const HomePage = () => {
       <div className="max-w-7xl mx-auto px-6 mb-10">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-4xl font-bold text-blue-800">Today's Technical Chart</h2>
-          {/* Search Box */}
           <input
             type="text"
             placeholder="Search by Program Details"
@@ -665,12 +835,14 @@ const HomePage = () => {
           />
         </div>
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Date: {selectedDate}</h3>
+
         {shifts.map((shift) => {
           const items = groupedTechnicalCharts[shift];
           if (!items || items.length === 0) return null;
-          // Calculate total duration for this shift
+
           const totalDuration = sumDurations(items.map((i) => i.duration));
           const chartHeaderClass = chartHeaderColors[shift] || 'bg-green-700';
+
           return (
             <div key={shift} className="mb-8 border rounded shadow bg-white">
               <div
@@ -679,9 +851,7 @@ const HomePage = () => {
               >
                 <span>{shift} Shift</span>
                 <div className="flex items-center space-x-4">
-                  <span>
-                    Total Duration: <strong>{totalDuration}</strong>
-                  </span>
+                  <span>Total Duration: <strong>{totalDuration}</strong></span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -693,6 +863,7 @@ const HomePage = () => {
                   </button>
                 </div>
               </div>
+
               <AnimatePresence>
                 {expandedChartShifts[shift] && (
                   <motion.div
@@ -724,6 +895,7 @@ const HomePage = () => {
                             : rowStatus.includes('completed')
                             ? 'bg-green-100'
                             : 'bg-white';
+
                           return (
                             <tr
                               key={i}
@@ -756,7 +928,6 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
 
 
 
