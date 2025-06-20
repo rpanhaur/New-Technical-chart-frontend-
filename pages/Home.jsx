@@ -733,9 +733,9 @@ const HomePage = () => {
       <div className="max-w-7xl mx-auto px-6 mt-10">
         <button
           onClick={exportDutyScheduleToPDF}
-          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+          className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-green-700"
         >
-          Export Engineering Duty Schedule Report
+          Generate Duty Schedule 
         </button>
       </div>
 

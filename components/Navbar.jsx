@@ -14,6 +14,7 @@ const Navbar=()=>{
       </div>
       {/* Desktop Menu */}
       <div className="hidden md:flex space-x-6 text-gray-700 font-medium">
+      <Link to="/login" className="hover:text-indigo-600 transition duration-200">Login</Link>
         <Link to="/" className="hover:text-indigo-600 transition duration-200">Home</Link>
         <Link to="/create-duty" className="hover:text-indigo-600 transition duration-200">Create Duty Schedule </Link>
         
