@@ -20,7 +20,8 @@ const Navbar = () => {
 
               <a href="#" className="hover:text-indigo-600 transition duration-200">Edit Technical Chart</a>
               <Link to="/create-page" className="hover:text-indigo-600 transition duration-200">Create Technical Chart</Link>
-              <Link to="/sign-up" className="hover:text-indigo-600 transition duration-200">SignUp</Link>
+              <Link to="/sign-up" className="hover:text-indigo-600 transition duration-200">Create Users</Link>
+
             </div>
           </div>
         </div>
