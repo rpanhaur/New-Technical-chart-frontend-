@@ -14,16 +14,16 @@ const Logout = () => {
         // Redirect to login page after short delay
         setTimeout(() => {
             navigate('/login');
-        }, 1000);
+        }, 2000);
     }, [navigate]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white shadow-md rounded-xl p-6 text-center">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                <h2 className="text-4xl font-semibold text-purple-800 mb-2">
                     Logging out...
                 </h2>
-                <p className="text-sm text-gray-500">You will be redirected shortly.</p>
+                <p className="text-3xl text-blue-500">You will be redirected shortly.</p>
             </div>
         </div>
     );

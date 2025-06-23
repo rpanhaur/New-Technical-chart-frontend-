@@ -22,6 +22,11 @@ const Navbar = () => {
               <Link to="/create-page" className="hover:text-indigo-600 transition duration-200">Create Technical Chart</Link>
               <Link to="/sign-up" className="hover:text-indigo-600 transition duration-200">Create Users</Link>
 
+              <Link to="/logout" className="text-red-500 hover:text-red-700 font-medium">
+                Logout
+              </Link>
+
+
             </div>
           </div>
         </div>
