@@ -1,4 +1,6 @@
 
+
+
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 // import Navbar from '../components/Navbar';
@@ -186,61 +188,73 @@
 //     }
 //   };
 
-//   // ✅ PDF Export Function for Engineering Duty Schedule (All Shifts)
+//   // ✅ PDF Export Function for Engineering Duty Schedule (All Shifts on One Page)
 //   const exportDutyScheduleToPDF = () => {
 //     try {
 //       const doc = new jsPDF();
+//       let startY = 20; // Start position for first shift
 
 //       shifts.forEach((shift, index) => {
 //         const duty = filteredDuties.find((d) => d.shiftTime === shift);
-//         if (!duty) return;
-
-//         if (index > 0) doc.addPage(); // New page for each shift
+//         if (!duty) return; // Skip if no data
 
 //         // Title
-//         doc.setFontSize(18);
+//         doc.setFontSize(16);
 //         doc.setTextColor(0, 0, 0);
-//         doc.text(`${shift} Shift - Engineering Duty Schedule`, 14, 20);
+//         doc.text(`${shift} Shift - Engineering Duty Schedule`, 14, startY);
+//         startY += 8;
 
 //         // Date
 //         doc.setFontSize(12);
-//         doc.text(`Date: ${selectedDate}`, 14, 30);
+//         doc.text(`Date: ${selectedDate}`, 14, startY);
+//         startY += 10;
 
 //         // Engineers
 //         doc.setFontSize(14);
-//         doc.text("Engineers", 14, 45);
+//         doc.text("Engineers", 14, startY);
+//         startY += 6;
+
 //         const engineerData = duty.engineers.map(e => [e.name, e.status]);
 //         autoTable(doc, {
 //           head: [['Name', 'Status']],
 //           body: engineerData,
-//           startY: 50,
+//           startY,
 //           styles: { fontSize: 10 },
-//           headStyles: { fillColor: shift === 'Morning' ? [41, 128, 185] : shift === 'Evening' ? [127, 63, 152] : [128, 128, 128] }
+//           headStyles: {
+//             fillColor: shift === 'Morning' ? [41, 128, 185] : 
+//                        shift === 'Evening' ? [127, 63, 152] : [128, 128, 128]
+//           }
 //         });
 
-//         let lastY = doc.lastAutoTable.finalY + 10;
+//         startY = doc.lastAutoTable.finalY + 8;
 
 //         // Technician
 //         doc.setFontSize(14);
-//         doc.text("Technician", 14, lastY);
+//         doc.text("Technician", 14, startY);
+//         startY += 6;
+
 //         autoTable(doc, {
 //           body: [[duty.technician.name, duty.technician.status]],
-//           startY: lastY + 5,
+//           startY,
 //           styles: { fontSize: 10 },
 //           headStyles: { fillColor: [39, 174, 96] }
 //         });
 
-//         lastY = doc.lastAutoTable.finalY + 10;
+//         startY = doc.lastAutoTable.finalY + 8;
 
 //         // Electrician
 //         doc.setFontSize(14);
-//         doc.text("Electrician", 14, lastY);
+//         doc.text("Electrician", 14, startY);
+//         startY += 6;
+
 //         autoTable(doc, {
 //           body: [[duty.electrician.name, duty.electrician.status]],
-//           startY: lastY + 5,
+//           startY,
 //           styles: { fontSize: 10 },
 //           headStyles: { fillColor: [241, 196, 15] }
 //         });
+
+//         startY = doc.lastAutoTable.finalY + 15;
 //       });
 
 //       doc.save(`Engineering_Duty_Schedule_Report_${selectedDate}.pdf`);
@@ -258,13 +272,13 @@
 //     <>
 //       <Navbar />
 
-//       {/* Export Engineering Duty Schedule Button */}
+//       {/* Add Export Engineering Duty Schedule Button */}
 //       <div className="max-w-7xl mx-auto px-6 mt-10">
 //         <button
 //           onClick={exportDutyScheduleToPDF}
-//           className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+//           className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-green-700"
 //         >
-//           Export Engineering Duty Schedule Report
+//           Generate Duty Schedule 
 //         </button>
 //       </div>
 
@@ -559,17 +573,14 @@ const HomePage = () => {
     fetchRoster();
   }, []);
 
-  // Local Date Formatter
   const toLocalDateString = (utcDateString) => {
     if (!utcDateString) return '';
     const date = new Date(utcDateString);
     return date.toISOString().split('T')[0];
   };
 
-  // Shifts
   const shifts = ['Morning', 'Evening', 'Midnight'];
 
-  // Filtered Data
   const filteredDuties = shiftDuties.filter(
     (duty) => toLocalDateString(duty.shiftDate) === selectedDate
   );
@@ -587,7 +598,6 @@ const HomePage = () => {
     return acc;
   }, {});
 
-  // Toggle Expand/Collapse for Chart Sections
   const toggleChartShift = (shift) => {
     setExpandedChartShifts((prev) => ({
       ...prev,
@@ -595,7 +605,7 @@ const HomePage = () => {
     }));
   };
 
-  // ✅ PDF Export Function for Technical Chart (Single Shift)
+  // ✅ PDF Export Function for Technical Chart (Single Shift) - Save Version
   const exportToPDF = (shift) => {
     try {
       const doc = new jsPDF();
@@ -645,28 +655,65 @@ const HomePage = () => {
     }
   };
 
-  // ✅ PDF Export Function for Engineering Duty Schedule (All Shifts on One Page)
+  // ✅ Generate Base64 PDF for Technical Chart (used for Email)
+  const generateTechnicalChartPDFBase64 = (shift) => {
+    const doc = new jsPDF();
+    const items = groupedTechnicalCharts[shift] || [];
+
+    doc.setFontSize(18);
+    doc.text(`${shift} Shift Technical Chart - ${selectedDate}`, 14, 22);
+
+    const tableColumn = [
+      'SN',
+      'Schedule Time',
+      'Program Details',
+      'In Time',
+      'Out Time',
+      'Duration',
+      'On Air Time',
+      'Remarks',
+    ];
+
+    const tableRows = items.map((item) => [
+      item.sn || '',
+      item.scheduleTime || '',
+      item.programDetails || '',
+      item.inTime || '',
+      item.outTime || '',
+      item.duration || '',
+      item.onAirTime || '',
+      item.remarks || '',
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 30,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [41, 128, 185] },
+    });
+
+    return doc.output('datauristring');
+  };
+
+  // ✅ Export Engineering Duty Schedule as PDF (All Shifts)
   const exportDutyScheduleToPDF = () => {
     try {
       const doc = new jsPDF();
-      let startY = 20; // Start position for first shift
+      let startY = 20;
 
-      shifts.forEach((shift, index) => {
+      shifts.forEach((shift) => {
         const duty = filteredDuties.find((d) => d.shiftTime === shift);
-        if (!duty) return; // Skip if no data
+        if (!duty) return;
 
-        // Title
         doc.setFontSize(16);
-        doc.setTextColor(0, 0, 0);
         doc.text(`${shift} Shift - Engineering Duty Schedule`, 14, startY);
         startY += 8;
 
-        // Date
         doc.setFontSize(12);
         doc.text(`Date: ${selectedDate}`, 14, startY);
         startY += 10;
 
-        // Engineers
         doc.setFontSize(14);
         doc.text("Engineers", 14, startY);
         startY += 6;
@@ -678,14 +725,12 @@ const HomePage = () => {
           startY,
           styles: { fontSize: 10 },
           headStyles: {
-            fillColor: shift === 'Morning' ? [41, 128, 185] : 
-                       shift === 'Evening' ? [127, 63, 152] : [128, 128, 128]
+            fillColor: shift === 'Morning' ? [41, 128, 185] :
+              shift === 'Evening' ? [127, 63, 152] : [128, 128, 128]
           }
         });
-
         startY = doc.lastAutoTable.finalY + 8;
 
-        // Technician
         doc.setFontSize(14);
         doc.text("Technician", 14, startY);
         startY += 6;
@@ -696,10 +741,8 @@ const HomePage = () => {
           styles: { fontSize: 10 },
           headStyles: { fillColor: [39, 174, 96] }
         });
-
         startY = doc.lastAutoTable.finalY + 8;
 
-        // Electrician
         doc.setFontSize(14);
         doc.text("Electrician", 14, startY);
         startY += 6;
@@ -710,7 +753,6 @@ const HomePage = () => {
           styles: { fontSize: 10 },
           headStyles: { fillColor: [241, 196, 15] }
         });
-
         startY = doc.lastAutoTable.finalY + 15;
       });
 
@@ -721,27 +763,122 @@ const HomePage = () => {
     }
   };
 
-  // Loading State
+  // ✅ Generate Base64 PDF for Engineering Duty Schedule
+  const generateDutySchedulePDFBase64 = () => {
+    const doc = new jsPDF();
+    let startY = 20;
+
+    shifts.forEach((shift) => {
+      const duty = filteredDuties.find((d) => d.shiftTime === shift);
+      if (!duty) return;
+
+      doc.setFontSize(16);
+      doc.text(`${shift} Shift - Engineering Duty Schedule`, 14, 22);
+
+      doc.setFontSize(12);
+      doc.text(`Date: ${selectedDate}`, 14, 30);
+
+      const engineerData = duty.engineers.map(e => [e.name, e.status]);
+      autoTable(doc, {
+        head: [['Name', 'Status']],
+        body: engineerData,
+        startY: 40,
+        styles: { fontSize: 10 },
+        headStyles: {
+          fillColor: shift === 'Morning' ? [41, 128, 185] :
+            shift === 'Evening' ? [127, 63, 152] : [128, 128, 128]
+        }
+      });
+
+      let finalY = doc.lastAutoTable.finalY + 10;
+
+      autoTable(doc, {
+        head: [['Technician']],
+        body: [[duty.technician.name]],
+        startY: finalY,
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [39, 174, 96] }
+      });
+
+      finalY = doc.lastAutoTable.finalY + 10;
+
+      autoTable(doc, {
+        head: [['Electrician']],
+        body: [[duty.electrician.name]],
+        startY: finalY,
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [241, 196, 15] }
+      });
+
+      finalY = doc.lastAutoTable.finalY + 20;
+
+      if (shift !== 'Midnight') doc.addPage();
+    });
+
+    return doc.output('datauristring');
+  };
+
+  // ✅ Send Email Function for Technical Chart
+  const sendEmail = async (shift) => {
+    const email = prompt('Enter recipient email:', '');
+    if (!email) return;
+
+    try {
+      const pdfBase64 = generateTechnicalChartPDFBase64(shift);
+      await axios.post('http://localhost:3000/api/send-email', {
+        pdfBase64,
+        email,
+        subject: `${shift} Shift Technical Chart - ${selectedDate}`
+      });
+      alert('✅ Email sent successfully!');
+    } catch (err) {
+      console.error('Failed to send email:', err);
+      alert('❌ Failed to send email. Check console for details.');
+    }
+  };
+
+  // ✅ Send Email Function for Engineering Duty Schedule
+  const sendDutyEmail = async () => {
+    const email = prompt('Enter recipient email:', '');
+    if (!email) return;
+
+    try {
+      const pdfBase64 = generateDutySchedulePDFBase64();
+      await axios.post('http://localhost:3000/api/send-email', {
+        pdfBase64,
+        email,
+        subject: `Engineering Duty Schedule - ${selectedDate}`
+      });
+      alert('✅ Email sent successfully!');
+    } catch (err) {
+      console.error('Failed to send email:', err);
+      alert('❌ Failed to send email. Check console for details.');
+    }
+  };
+
   if (loading) return <div className="text-center mt-20 text-gray-500">Loading...</div>;
   if (error) return <div className="text-center mt-20 text-red-600">{error}</div>;
 
   return (
     <>
       <Navbar />
-
-      {/* Add Export Engineering Duty Schedule Button */}
-      <div className="max-w-7xl mx-auto px-6 mt-10">
+      <div className="max-w-7xl mx-auto px-6 mt-10 flex gap-4">
         <button
           onClick={exportDutyScheduleToPDF}
           className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-green-700"
         >
-          Generate Duty Schedule 
+          Generate Duty Schedule
+        </button>
+        <button
+          onClick={sendDutyEmail}
+          className="bg-purple-500 text-white px-4 py-2 rounded shadow hover:bg-purple-700"
+        >
+          Email Duty Schedule
         </button>
       </div>
 
       {/* Existing UI Below */}
       <div className="max-w-7xl mx-auto px-6 mt-10">
-        {/* Page Title and Toggle */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Engineering Duty Schedule</h1>
           <button
@@ -752,7 +889,6 @@ const HomePage = () => {
           </button>
         </div>
 
-        {/* Date Picker */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-1">Select Date:</label>
           <input
@@ -763,7 +899,6 @@ const HomePage = () => {
           />
         </div>
 
-        {/* Shift Duties Section */}
         <AnimatePresence>
           {expandedDutySection && (
             <motion.div
@@ -776,9 +911,7 @@ const HomePage = () => {
               {shifts.map((shiftTime) => {
                 const duty = filteredDuties.find((d) => d.shiftTime === shiftTime);
                 if (!duty) return null;
-
                 const shiftColor = shiftColors[duty.shiftTime] || 'bg-white border-gray-300';
-
                 return (
                   <div key={shiftTime} className={`rounded-xl shadow-md border-2 ${shiftColor}`}>
                     <div className="p-5">
@@ -800,7 +933,6 @@ const HomePage = () => {
                           ))}
                         </div>
                       </div>
-
                       <div className="space-y-4">
                         <div className="bg-green-100 p-3 rounded border-l-4 border-green-500">
                           <h4 className="font-semibold">Technician</h4>
@@ -835,14 +967,11 @@ const HomePage = () => {
           />
         </div>
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Date: {selectedDate}</h3>
-
         {shifts.map((shift) => {
           const items = groupedTechnicalCharts[shift];
           if (!items || items.length === 0) return null;
-
           const totalDuration = sumDurations(items.map((i) => i.duration));
           const chartHeaderClass = chartHeaderColors[shift] || 'bg-green-700';
-
           return (
             <div key={shift} className="mb-8 border rounded shadow bg-white">
               <div
@@ -861,9 +990,17 @@ const HomePage = () => {
                   >
                     Generate Report
                   </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      sendEmail(shift);
+                    }}
+                    className="bg-purple-500 text-white px-3 py-1 rounded shadow hover:bg-purple-600 transition"
+                  >
+                    Email Report
+                  </button>
                 </div>
               </div>
-
               <AnimatePresence>
                 {expandedChartShifts[shift] && (
                   <motion.div
@@ -893,15 +1030,13 @@ const HomePage = () => {
                           const statusClass = rowStatus.includes('late')
                             ? 'bg-red-100'
                             : rowStatus.includes('completed')
-                            ? 'bg-green-100'
-                            : 'bg-white';
-
+                              ? 'bg-green-100'
+                              : 'bg-white';
                           return (
                             <tr
                               key={i}
-                              className={`odd:bg-white even:bg-gray-50 ${statusClass} ${
-                                isLongDuration ? 'font-bold text-red-600' : ''
-                              }`}
+                              className={`odd:bg-white even:bg-gray-50 ${statusClass} ${isLongDuration ? 'font-bold text-red-600' : ''
+                                }`}
                             >
                               <td className="p-2">{item.sn}</td>
                               <td className="p-2">{item.scheduleTime}</td>
