@@ -839,6 +839,8 @@ const HomePage = () => {
 
   // ✅ Send Email Function for Engineering Duty Schedule
   const sendDutyEmail = async () => {
+
+    console.log('mail checking in frontend ');
     const email = prompt('Enter recipient email:', '');
     if (!email) return;
 
@@ -846,7 +848,7 @@ const HomePage = () => {
       const pdfBase64 = generateDutySchedulePDFBase64();
       await axios.post('http://localhost:3000/api/send-email', {
         pdfBase64,
-        email,
+        to:email,
         subject: `Engineering Duty Schedule - ${selectedDate}`
       });
       alert('✅ Email sent successfully!');
@@ -1063,6 +1065,7 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
 
 
