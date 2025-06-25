@@ -848,7 +848,7 @@ const HomePage = () => {
       const pdfBase64 = generateDutySchedulePDFBase64();
       await axios.post('http://localhost:3000/api/send-email', {
         pdfBase64,
-        to:email,
+        email,
         subject: `Engineering Duty Schedule - ${selectedDate}`
       });
       alert('✅ Email sent successfully!');
