@@ -1,6 +1,10 @@
+
+
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 // import Navbar from '../components/Navbar';
+// import { useNavigate } from 'react-router-dom';
+
 // import { motion, AnimatePresence } from 'framer-motion';
 // import jsPDF from 'jspdf';
 // import autoTable from 'jspdf-autotable';
@@ -41,6 +45,19 @@
 // };
 
 // const HomePage = () => {
+
+//   const navigate = useNavigate();
+
+// useEffect(() => {
+//   const token = localStorage.getItem('token');
+//   if (!token) {
+//     navigate('/'); // ⛔ Redirect if not logged in
+//   }
+// }, [navigate]);
+
+
+
+
 //   // Helper: Format today's date as YYYY-MM-DD
 //   const getTodayDate = () => {
 //     const today = new Date();
@@ -592,12 +609,10 @@
 
 // export default HomePage;
 
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
-
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -638,18 +653,14 @@ const sumDurations = (durations) => {
 };
 
 const HomePage = () => {
-
   const navigate = useNavigate();
 
-useEffect(() => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    navigate('/'); // ⛔ Redirect if not logged in
-  }
-}, [navigate]);
-
-
-
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/'); // ⛔ Redirect if not logged in
+    }
+  }, [navigate]);
 
   // Helper: Format today's date as YYYY-MM-DD
   const getTodayDate = () => {
@@ -716,7 +727,6 @@ useEffect(() => {
   };
 
   const shifts = ['Morning', 'Evening', 'Midnight'];
-
   const filteredDuties = shiftDuties.filter(
     (duty) => toLocalDateString(duty.shiftDate) === selectedDate
   );
@@ -750,10 +760,8 @@ useEffect(() => {
         alert('No data available for this shift to export.');
         return;
       }
-
       doc.setFontSize(18);
       doc.text(`${shift} Shift Technical Chart - ${selectedDate}`, 14, 22);
-
       const tableColumn = [
         'SN',
         'Schedule Time',
@@ -764,7 +772,6 @@ useEffect(() => {
         'On Air Time',
         'Remarks',
       ];
-
       const tableRows = items.map((item) => [
         item.sn || '',
         item.scheduleTime || '',
@@ -775,7 +782,6 @@ useEffect(() => {
         item.onAirTime || '',
         item.remarks || '',
       ]);
-
       autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
@@ -783,7 +789,6 @@ useEffect(() => {
         styles: { fontSize: 8 },
         headStyles: { fillColor: [41, 128, 185] },
       });
-
       doc.save(`${shift}_Technical_Chart_${selectedDate}.pdf`);
     } catch (err) {
       console.error('PDF Export Error:', err);
@@ -795,10 +800,8 @@ useEffect(() => {
   const generateTechnicalChartPDFBase64 = (shift) => {
     const doc = new jsPDF();
     const items = groupedTechnicalCharts[shift] || [];
-
     doc.setFontSize(18);
     doc.text(`${shift} Shift Technical Chart - ${selectedDate}`, 14, 22);
-
     const tableColumn = [
       'SN',
       'Schedule Time',
@@ -809,7 +812,6 @@ useEffect(() => {
       'On Air Time',
       'Remarks',
     ];
-
     const tableRows = items.map((item) => [
       item.sn || '',
       item.scheduleTime || '',
@@ -820,7 +822,6 @@ useEffect(() => {
       item.onAirTime || '',
       item.remarks || '',
     ]);
-
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
@@ -828,29 +829,28 @@ useEffect(() => {
       styles: { fontSize: 8 },
       headStyles: { fillColor: [41, 128, 185] },
     });
-
     return doc.output('datauristring');
   };
 
-  // ✅ Export Engineering Duty Schedule as PDF (All Shifts)
+  // ✅ Export Engineering Duty Schedule as PDF (All Shifts on One Page)
   const exportDutyScheduleToPDF = () => {
     try {
       const doc = new jsPDF();
       let startY = 20;
 
+      doc.setFontSize(18);
+      doc.text(`Engineering Duty Schedule - ${selectedDate}`, 14, 15);
+      startY = 25;
+
       shifts.forEach((shift) => {
         const duty = filteredDuties.find((d) => d.shiftTime === shift);
         if (!duty) return;
 
-        doc.setFontSize(16);
-        doc.text(`${shift} Shift - Engineering Duty Schedule`, 14, startY);
-        startY += 8;
+        doc.setFontSize(14);
+        doc.text(`${shift} Shift`, 14, startY);
+        startY += 6;
 
         doc.setFontSize(12);
-        doc.text(`Date: ${selectedDate}`, 14, startY);
-        startY += 10;
-
-        doc.setFontSize(14);
         doc.text("Engineers", 14, startY);
         startY += 6;
 
@@ -865,31 +865,29 @@ useEffect(() => {
               shift === 'Evening' ? [127, 63, 152] : [128, 128, 128]
           }
         });
-        startY = doc.lastAutoTable.finalY + 8;
+        startY = doc.lastAutoTable.finalY + 4;
 
-        doc.setFontSize(14);
+        doc.setFontSize(12);
         doc.text("Technician", 14, startY);
         startY += 6;
-
         autoTable(doc, {
           body: [[duty.technician.name, duty.technician.status]],
           startY,
           styles: { fontSize: 10 },
           headStyles: { fillColor: [39, 174, 96] }
         });
-        startY = doc.lastAutoTable.finalY + 8;
+        startY = doc.lastAutoTable.finalY + 4;
 
-        doc.setFontSize(14);
+        doc.setFontSize(12);
         doc.text("Electrician", 14, startY);
         startY += 6;
-
         autoTable(doc, {
           body: [[duty.electrician.name, duty.electrician.status]],
           startY,
           styles: { fontSize: 10 },
           headStyles: { fillColor: [241, 196, 15] }
         });
-        startY = doc.lastAutoTable.finalY + 15;
+        startY = doc.lastAutoTable.finalY + 10;
       });
 
       doc.save(`Engineering_Duty_Schedule_Report_${selectedDate}.pdf`);
@@ -910,10 +908,8 @@ useEffect(() => {
 
       doc.setFontSize(16);
       doc.text(`${shift} Shift - Engineering Duty Schedule`, 14, 22);
-
       doc.setFontSize(12);
       doc.text(`Date: ${selectedDate}`, 14, 30);
-
       const engineerData = duty.engineers.map(e => [e.name, e.status]);
       autoTable(doc, {
         head: [['Name', 'Status']],
@@ -925,9 +921,7 @@ useEffect(() => {
             shift === 'Evening' ? [127, 63, 152] : [128, 128, 128]
         }
       });
-
       let finalY = doc.lastAutoTable.finalY + 10;
-
       autoTable(doc, {
         head: [['Technician']],
         body: [[duty.technician.name]],
@@ -935,9 +929,7 @@ useEffect(() => {
         styles: { fontSize: 10 },
         headStyles: { fillColor: [39, 174, 96] }
       });
-
       finalY = doc.lastAutoTable.finalY + 10;
-
       autoTable(doc, {
         head: [['Electrician']],
         body: [[duty.electrician.name]],
@@ -945,10 +937,7 @@ useEffect(() => {
         styles: { fontSize: 10 },
         headStyles: { fillColor: [241, 196, 15] }
       });
-
       finalY = doc.lastAutoTable.finalY + 20;
-
-      if (shift !== 'Midnight') doc.addPage();
     });
 
     return doc.output('datauristring');
@@ -958,7 +947,6 @@ useEffect(() => {
   const sendEmail = async (shift) => {
     const email = prompt('Enter recipient email:', '');
     if (!email) return;
-
     try {
       const pdfBase64 = generateTechnicalChartPDFBase64(shift);
       await axios.post('http://localhost:3000/api/send-email', {
@@ -975,11 +963,9 @@ useEffect(() => {
 
   // ✅ Send Email Function for Engineering Duty Schedule
   const sendDutyEmail = async () => {
-
     console.log('mail checking in frontend ');
     const email = prompt('Enter recipient email:', '');
     if (!email) return;
-
     try {
       const pdfBase64 = generateDutySchedulePDFBase64();
       await axios.post('http://localhost:3000/api/send-email', {
@@ -1026,7 +1012,6 @@ useEffect(() => {
             {expandedDutySection ? 'Hide Duty' : 'Show Duty'}
           </button>
         </div>
-
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-1">Select Date:</label>
           <input
@@ -1036,7 +1021,6 @@ useEffect(() => {
             className="px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           />
         </div>
-
         <AnimatePresence>
           {expandedDutySection && (
             <motion.div
