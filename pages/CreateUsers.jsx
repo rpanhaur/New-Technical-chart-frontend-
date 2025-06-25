@@ -108,12 +108,25 @@
 
 // export default CreateUser;
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const CreateUser = () => {
+    const navigate = useNavigate();
+    console.log('check check loading');
+
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/'); // ⛔ Redirect if not logged in
+      }
+    }, [navigate]);
+  
+
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',

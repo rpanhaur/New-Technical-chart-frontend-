@@ -563,13 +563,24 @@
 // export default CreatePage;
 
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const CreatePage = ({ duty }) => {
   const navigate = useNavigate();
+
+  console.log('check check loading');
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/'); // ⛔ Redirect if not logged in
+    }
+  }, [navigate]);
+
+
   const SHIFT_DURATION_SECONDS = 8 * 3600;
 
   const [data, setData] = useState({
@@ -582,6 +593,10 @@ const CreatePage = ({ duty }) => {
     onAirTime: "",
     remarks: "",
   });
+
+ 
+
+  
 
   const [shift, setShift] = useState("");
   const [shiftDate, setShiftDate] = useState("");
@@ -698,7 +713,7 @@ const CreatePage = ({ duty }) => {
       }
 
       alert("Technical Chart Submitted Successfully");
-      navigate("/");
+      navigate("/home-page");
     } catch (err) {
       console.error("Submission failed:", err);
       setErrorMsg("Failed to submit the technical chart.");

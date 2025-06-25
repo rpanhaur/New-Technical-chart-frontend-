@@ -34,7 +34,7 @@ const Login = () => {
 
       // Navigate to homepage after short delay
       setTimeout(() => {
-        navigate('/');
+        navigate('/home-page');
       }, 1000);
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Login failed';

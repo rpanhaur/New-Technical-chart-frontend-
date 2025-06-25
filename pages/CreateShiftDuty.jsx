@@ -195,15 +195,25 @@
 
 
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';  // <-- Import axios
 import Navbar from '../components/Navbar';
 
+
+
 const dutyOptions = ['On Duty', 'OffDay Duty', 'Leave', 'Weekly Off','Live Duty','PCR' ,'Others'];
 
 const CreateShiftDuty = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
+
+
+  
+ 
+
+ 
+ 
+   
 
   const [duty, setDuty] = useState({
     shiftDate: '',
@@ -213,7 +223,16 @@ const CreateShiftDuty = () => {
     electrician: { name: '', status: '' }
   });
 
-  console.log('check check shift time', duty.shiftTime);
+  console.log('check check loading');
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/'); // ⛔ Redirect if not logged in
+    }
+  }, [navigate]);
+
+  
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -277,7 +296,7 @@ const CreateShiftDuty = () => {
       const response = await axios.post('http://localhost:3000/api/duties', payload);
       if (response.status === 201 || response.status === 200) {
         setLoading(false);
-        navigate('/');  // Redirect after success
+        navigate('/home-page');  // Redirect after success
       } else {
         throw new Error('Failed to create shift duty');
       }

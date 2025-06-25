@@ -13,8 +13,8 @@ const Logout = () => {
 
         // Redirect to login page after short delay
         setTimeout(() => {
-            navigate('/login');
-        }, 2000);
+            navigate('/');
+        }, 1500);
     }, [navigate]);
 
     return (

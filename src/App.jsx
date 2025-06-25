@@ -49,10 +49,10 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path='/sign-up' element={<CreateUser />} />
-          <Route path='/login' element={<LoginPage />} />
+          <Route path='/' element={<LoginPage />} />
           <Route path='/logout' element={<Logout/>} />
 
-          <Route path="/" element={<Home />} />
+          <Route path="/home-page" element={<Home />} />
           <Route path="/create-page" element={<CreatePage />} />
           <Route path="/create-duty" element={<CreateShiftDuty />} />
         </Routes>
