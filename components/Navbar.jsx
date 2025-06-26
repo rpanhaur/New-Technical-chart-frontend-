@@ -25,6 +25,9 @@ const Navbar = () => {
               <Link to="/logout" className="text-red-500 hover:text-red-700 font-medium">
                 Logout
               </Link>
+              <Link to="/live" className="text-green-500 hover:text-purple-700 font-bold text-2xl">
+                LIVE
+              </Link>
 
 
             </div>

@@ -42,6 +42,7 @@ import CreateShiftDuty from '../pages/CreateShiftDuty';
 import LoginPage from '../pages/LoginPage';
 import CreateUser from '../pages/CreateUsers';
 import Logout from '../pages/Logout';
+import LivePlayer from '../pages/LivePage';
 
 const App = () => {
   return (
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="/home-page" element={<Home />} />
           <Route path="/create-page" element={<CreatePage />} />
           <Route path="/create-duty" element={<CreateShiftDuty />} />
+          <Route path='/live'  element={<LivePlayer/>}/>
         </Routes>
       </BrowserRouter>
     </div>
